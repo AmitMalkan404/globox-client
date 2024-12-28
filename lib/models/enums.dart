@@ -1,0 +1,1 @@
+enum ScreenView { ListView, MapView }
