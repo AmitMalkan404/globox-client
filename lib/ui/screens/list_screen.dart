@@ -27,8 +27,8 @@ class PackagesListView extends StatelessWidget {
     ),
     Package(
       id: '4',
-      address: 'Beersheba',
-      description: 'A package to Beersheba.',
+      address: 'Beersheva',
+      description: 'A package to Beersheva.',
       coordinates: [31.2529, 34.7915],
       status: 'Arrived',
     ),
