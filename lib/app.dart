@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -16,14 +16,15 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   var _activeView = ScreenView.ListView;
 
-  void handleViewChange(bool state) {
+  void handleViewChange(int? index) {
     setState(() {
-      _activeView = state ? ScreenView.ListView : ScreenView.MapView;
+      _activeView = index == 0 ? ScreenView.ListView : ScreenView.MapView;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     Widget screenWidget = PackagesListView();
 
     if (_activeView == ScreenView.MapView) {
@@ -42,27 +43,39 @@ class _AppState extends State<App> {
               height: 50,
             ),
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: LiteRollingSwitch(
-                value: true,
-                width: 150,
-                textOn: '',
-                textOff: '',
-                colorOn: Colors.lightBlue,
-                colorOff: Colors.greenAccent,
-                iconOn: Icons.list,
-                iconOff: Icons.map,
-                animationDuration: const Duration(milliseconds: 300),
-                onChanged: handleViewChange,
-                onDoubleTap: () {},
-                onSwipe: () {},
-                onTap: () {},
-              ),
-            ),
+                padding: const EdgeInsets.all(16.0),
+                child: FlutterToggleTab(
+                  width: 50,
+                  height: 60,
+                  borderRadius: 15,
+                  selectedTextStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
+                  unSelectedTextStyle: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400),
+                  icons: [Icons.list, Icons.map],
+                  iconSize: 30.0,
+                  selectedLabelIndex: (index) {
+                    handleViewChange(index);
+                  },
+                  labels: ['', ''],
+                  selectedIndex: _activeView.index,
+                )),
             Expanded(
               flex: 1,
-              child: screenWidget,
+              child: Center(
+                child: SizedBox(
+                  width: screenWidth * 0.95,
+                  child: screenWidget,
+                ),
+              ),
             ),
+            SizedBox(
+              height: 20,
+            )
           ],
         ),
       ),

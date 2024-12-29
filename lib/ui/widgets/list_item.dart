@@ -33,8 +33,8 @@ class ListItem extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 Icon(package.status == 'Arrived'
-                    ? Icons.check_rounded
-                    : Icons.watch_later_outlined),
+                    ? Icons.check
+                    : Icons.local_shipping),
                 Icon(Icons.delete)
               ],
             ),
