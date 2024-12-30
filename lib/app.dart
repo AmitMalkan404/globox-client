@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
+import 'package:globox/services/messages_service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
 
@@ -15,6 +16,24 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   var _activeView = ScreenView.ListView;
+  final MessagesService messagesService = MessagesService();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages(); // קריאה לפונקציה נפרדת
+  }
+
+  Future<void> _loadMessages() async {
+    final messagesService = MessagesService();
+    await messagesService.getMessages(); // פעולה אסינכרונית
+    var messageBodies = messagesService.messages
+        .map((message) => message.body)
+        .where((body) => body != null) // סינון של null
+        .cast<String>()
+        .toList();
+    setState(() {});
+  }
 
   void handleViewChange(int? index) {
     setState(() {
