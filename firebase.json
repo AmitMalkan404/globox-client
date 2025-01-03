@@ -1,0 +1,25 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "globox-9b65a",
+          "appId": "1:757949910153:android:eb6af57438346e6c594a58",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "globox-9b65a",
+          "configurations": {
+            "android": "1:757949910153:android:eb6af57438346e6c594a58",
+            "ios": "1:757949910153:ios:927cc728a280db7b594a58",
+            "macos": "1:757949910153:ios:927cc728a280db7b594a58",
+            "web": "1:757949910153:web:455662f06af80ba7594a58",
+            "windows": "1:757949910153:web:7fb64a907255b58c594a58"
+          }
+        }
+      }
+    }
+  }
+}

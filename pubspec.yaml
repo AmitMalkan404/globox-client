@@ -39,6 +39,7 @@ dependencies:
   flutter_toggle_tab: ^1.4.1
   flutter_sms_inbox: ^1.0.3
   permission_handler: ^11.3.1
+  firebase_core: ^3.9.0
 
 dev_dependencies:
   flutter_test:
