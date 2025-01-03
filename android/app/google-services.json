@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "757949910153",
+    "project_id": "globox-9b65a",
+    "storage_bucket": "globox-9b65a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757949910153:android:eb6af57438346e6c594a58",
+        "android_client_info": {
+          "package_name": "com.example.globox"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkmxXVh7V-NMGRDpexmZYE4q0ukDsdkEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

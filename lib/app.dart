@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
+import 'package:globox/models/package.dart';
 import 'package:globox/services/messages_service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
+import 'package:globox/ui/widgets/new_package.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -41,6 +43,28 @@ class _AppState extends State<App> {
     });
   }
 
+  void _addPackage(Package package) {
+    print(package);
+    setState(() {});
+  }
+
+  void _openNewPackageModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) {
+        final bottomInset = MediaQuery.maybeOf(ctx)?.viewInsets.bottom ??
+            0.0; // אם אין MediaQuery, השתמש ב-0
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: bottomInset,
+          ),
+          child: NewPackage(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -52,51 +76,51 @@ class _AppState extends State<App> {
       );
     }
 
-    return MaterialApp(
-      title: 'Globox',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(
-        body: Column(
-          children: [
-            SizedBox(
-              height: 50,
-            ),
-            Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: FlutterToggleTab(
-                  width: 50,
-                  height: 60,
-                  borderRadius: 15,
-                  selectedTextStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
-                  unSelectedTextStyle: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400),
-                  icons: [Icons.list, Icons.map],
-                  iconSize: 30.0,
-                  selectedLabelIndex: (index) {
-                    handleViewChange(index);
-                  },
-                  labels: ['', ''],
-                  selectedIndex: _activeView.index,
-                )),
-            Expanded(
-              flex: 1,
-              child: Center(
-                child: SizedBox(
-                  width: screenWidth * 0.95,
-                  child: screenWidget,
-                ),
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 50,
+          ),
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FlutterToggleTab(
+                width: 50,
+                height: 60,
+                borderRadius: 15,
+                selectedTextStyle: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600),
+                unSelectedTextStyle: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400),
+                icons: [Icons.list, Icons.map],
+                iconSize: 30.0,
+                selectedLabelIndex: (index) {
+                  handleViewChange(index);
+                },
+                labels: ['', ''],
+                selectedIndex: _activeView.index,
+              )),
+          Expanded(
+            flex: 1,
+            child: Center(
+              child: SizedBox(
+                width: screenWidth * 0.95,
+                child: screenWidget,
               ),
             ),
-            SizedBox(
-              height: 20,
-            )
-          ],
-        ),
+          ),
+          FloatingActionButton(
+            onPressed: () => _openNewPackageModal(context),
+            child: const Icon(Icons.add),
+          ),
+          SizedBox(
+            height: 20,
+          )
+        ],
       ),
     );
   }
