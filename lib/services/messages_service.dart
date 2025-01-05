@@ -5,7 +5,6 @@ class MessagesService {
   static final MessagesService _instance = MessagesService._internal();
 
   // ignore: prefer_typing_uninitialized_variables
-  var _hasSMSPermission;
   final SmsQuery _query = SmsQuery();
   List<SmsMessage> _messages = [];
 

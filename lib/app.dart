@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
+import 'package:globox/services/get_packages.service.dart';
 import 'package:globox/services/messages_service.dart';
+import 'package:globox/services/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
 import 'package:globox/ui/widgets/new_package.dart';
@@ -17,13 +19,22 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  List<Package> _packages = [];
   var _activeView = ScreenView.ListView;
   final MessagesService messagesService = MessagesService();
 
   @override
   void initState() {
     super.initState();
-    _loadMessages(); // קריאה לפונקציה נפרדת
+    _initializeData(); // קריאה לפונקציה נפרדת
+  }
+
+  Future<void> _initializeData() async {
+    await _loadMessages();
+    final packages = await loadPackages();
+    setState(() {
+      _packages = packages; // עדכון הסטייט
+    });
   }
 
   Future<void> _loadMessages() async {
@@ -34,18 +45,17 @@ class _AppState extends State<App> {
         .where((body) => body != null) // סינון של null
         .cast<String>()
         .toList();
-    setState(() {});
+    sendMessages(messageBodies);
+  }
+
+  Future<List<Package>> loadPackages() async {
+    return await getPackages();
   }
 
   void handleViewChange(int? index) {
     setState(() {
       _activeView = index == 0 ? ScreenView.ListView : ScreenView.MapView;
     });
-  }
-
-  void _addPackage(Package package) {
-    print(package);
-    setState(() {});
   }
 
   void _openNewPackageModal(BuildContext context) {
@@ -68,7 +78,9 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    Widget screenWidget = PackagesListView();
+    Widget screenWidget = PackagesListView(
+      packages: this._packages,
+    );
 
     if (_activeView == ScreenView.MapView) {
       screenWidget = PackageMapView(

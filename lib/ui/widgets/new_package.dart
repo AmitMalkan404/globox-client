@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
+import 'package:globox/services/new_package.service.dart';
 
 class NewPackage extends StatefulWidget {
   const NewPackage({
@@ -14,7 +16,7 @@ class _NewPackageState extends State<NewPackage> {
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  void _submitPackageData() {
+  Future<void> _submitPackageData() async {
     final enteredPackageId = _packageIdController.text.trim();
     final enteredDescription = _descriptionController.text.trim();
 
@@ -39,6 +41,15 @@ class _NewPackageState extends State<NewPackage> {
     }
 
     // קריאה לפונקציה המועברת דרך onAddPackage
+    await addNewPackage(
+      Package(
+        packageId: enteredPackageId,
+        description: enteredDescription,
+        address: '',
+        status: ShipmentStatus.noStatus,
+        coordinates: [],
+      ),
+    );
 
     Navigator.pop(context); // סגור את ה-modal
   }

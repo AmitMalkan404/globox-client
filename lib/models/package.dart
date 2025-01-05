@@ -1,14 +1,18 @@
+import 'package:globox/models/enums.dart';
+
 class Package {
-  final String id;
+  final String packageId;
   final String address;
   final String description;
-  final String status;
+  final ShipmentStatus status;
   final List<double> coordinates;
+  final DateTime? createdAt;
 
   Package(
-      {required this.id,
+      {required this.packageId,
       required this.address,
       required this.description,
       required this.status,
-      required this.coordinates});
+      required this.coordinates,
+      this.createdAt});
 }
