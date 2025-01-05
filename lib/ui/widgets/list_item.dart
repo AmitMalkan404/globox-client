@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:globox/models/enums.dart';
 import '../../models/package.dart';
 
 class ListItem extends StatelessWidget {
@@ -8,6 +9,17 @@ class ListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    IconData getIconByShipmentStatus(ShipmentStatus status) {
+      switch (status) {
+        case ShipmentStatus.arrived:
+          return Icons.check;
+        case ShipmentStatus.noStatus:
+          return Icons.question_mark_rounded;
+        case ShipmentStatus.delivery:
+          return Icons.local_shipping;
+      }
+    }
+
     return Center(
       child: Card(
           child: Row(
@@ -22,22 +34,20 @@ class ListItem extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text(package.id),
+                Text(package.packageId),
                 Text(package.description),
                 Text(package.address),
               ],
             ),
           ),
+          Icon(getIconByShipmentStatus(package.status)),
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: <Widget>[
-                Icon(package.status == 'Arrived'
-                    ? Icons.check
-                    : Icons.local_shipping),
-                Icon(Icons.delete)
-              ],
+            padding: const EdgeInsets.only(
+              right: 28.0,
+              top: 8.0,
+              bottom: 8.0,
             ),
+            child: Icon(Icons.delete),
           )
         ],
       )),
