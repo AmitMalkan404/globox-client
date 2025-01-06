@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_compass/flutter_map_compass.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../../models/package.dart';
@@ -20,6 +21,15 @@ class PackageMapView extends StatelessWidget {
         TileLayer(
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: ['a', 'b', 'c'],
+        ),
+        const MapCompass.cupertino(
+          hideIfRotatedNorth: true,
+        ),
+
+        // Or use the primary constructor to customize all
+        const MapCompass(
+          icon: Icon(Icons.arrow_upward),
+          hideIfRotatedNorth: true,
         ),
       ],
     );
