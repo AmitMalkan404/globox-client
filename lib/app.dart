@@ -84,7 +84,10 @@ class _AppState extends State<App> {
 
     if (_activeView == ScreenView.MapView) {
       screenWidget = PackageMapView(
-        packages: [],
+        packages: this
+            ._packages
+            .where((pckg) => pckg.coordinates.isNotEmpty)
+            .toList(),
       );
     }
 

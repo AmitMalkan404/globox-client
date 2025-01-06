@@ -51,7 +51,7 @@ class _NewPackageState extends State<NewPackage> {
       ),
     );
 
-    Navigator.pop(context); // סגור את ה-modal
+    Navigator.pop(context); // סוגר את ה-modal
   }
 
   @override
