@@ -23,7 +23,7 @@ class MessagesService {
       final messages = await _query.querySms(
         kinds: [SmsQueryKind.inbox],
         address: null,
-        count: null,
+        count: 1000,
       );
       this._messages = messages;
     } else {

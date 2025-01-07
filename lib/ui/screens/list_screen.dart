@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:globox/models/enums.dart';
 import 'package:globox/ui/widgets/list_item.dart';
 import '../../models/package.dart';
 
 class PackagesListView extends StatelessWidget {
   final List<Package> packages;
 
-  PackagesListView({super.key, required this.packages});
+  const PackagesListView({super.key, required this.packages});
 
   @override
   Widget build(BuildContext context) {
