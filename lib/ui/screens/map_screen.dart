@@ -1,28 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_compass/flutter_map_compass.dart';
+import 'package:globox/ui/widgets/map_item.dart';
+import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
-
 import '../../models/package.dart';
 
-class PackageMapView extends StatelessWidget {
+class PackageMapView extends StatefulWidget {
+  const PackageMapView({super.key, required this.packages});
+
   final List<Package> packages;
 
-  const PackageMapView({super.key, required this.packages});
+  @override
+  State<StatefulWidget> createState() => _PackageMapView();
+}
+
+class _PackageMapView extends State<PackageMapView> {
+  void showPackageDetails(BuildContext context, Package package) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext ctx) {
+        return PackageDetailsWidget(package: package);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Marker buildMarker(LatLng coordinates) {
-      return Marker(
-        point: coordinates,
-        width: 100,
-        height: 12,
-        child: Icon(
-          Icons.location_on,
-          color: Colors.red, // ניתן לשנות את הצבע אם תרצה
-          size: 24.0, // ניתן להתאים את הגודל
-        ),
-      );
+    Marker buildMarker(Package pckg) {
+      return MapMarker(
+        pckg.packageId,
+        LatLng(pckg.coordinates[0], pckg.coordinates[1]),
+        () {
+          showPackageDetails(context, pckg);
+        },
+      ).toMarker();
     }
 
     return FlutterMap(
@@ -38,17 +55,13 @@ class PackageMapView extends StatelessWidget {
         const MapCompass.cupertino(
           hideIfRotatedNorth: true,
         ),
-
-        // Or use the primary constructor to customize all
         const MapCompass(
           icon: Icon(Icons.arrow_upward),
           hideIfRotatedNorth: true,
         ),
         MarkerLayer(
-            markers: packages.map((pckg) {
-          // המרה של List<double> ל-LatLng
-          final coordinates = LatLng(pckg.coordinates[0], pckg.coordinates[1]);
-          return buildMarker(coordinates);
+            markers: widget.packages.map((pckg) {
+          return buildMarker(pckg);
         }).toList())
       ],
     );
