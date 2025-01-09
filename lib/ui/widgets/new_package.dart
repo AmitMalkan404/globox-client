@@ -3,19 +3,19 @@ import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
 import 'package:globox/services/new_package.service.dart';
 
-class NewPackage extends StatefulWidget {
+class AddNewPackage extends StatefulWidget {
   final void Function(LoadingType) newPackageCallback;
 
-  const NewPackage({
+  const AddNewPackage({
     super.key,
     required this.newPackageCallback,
   });
 
   @override
-  State<NewPackage> createState() => _NewPackageState();
+  State<AddNewPackage> createState() => _AddNewPackageState();
 }
 
-class _NewPackageState extends State<NewPackage> {
+class _AddNewPackageState extends State<AddNewPackage> {
   bool _isSubmitting = false;
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -47,6 +47,7 @@ class _NewPackageState extends State<NewPackage> {
       return;
     }
 
+    // setting the loader to be on adding package loading view
     widget.newPackageCallback(LoadingType.addingPackage);
 
     // קריאה לפונקציה המועברת דרך onAddPackage
@@ -62,6 +63,7 @@ class _NewPackageState extends State<NewPackage> {
 
     Navigator.pop(context); // סוגר את ה-modal
 
+    // setting the loader to be off as it finished adding the package
     widget.newPackageCallback(LoadingType.none);
     setState(() {
       _isSubmitting = false;

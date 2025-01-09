@@ -91,7 +91,7 @@ class _AppState extends State<App> {
           padding: EdgeInsets.only(
             bottom: bottomInset,
           ),
-          child: NewPackage(
+          child: AddNewPackage(
             newPackageCallback: handleNewPackageCallback,
           ),
         );
@@ -99,6 +99,16 @@ class _AppState extends State<App> {
     );
   }
 
+  /// AddNewPackage window is updating the app on each stage of adding the new
+  /// package. when its waiting for adding the package it sends us
+  /// "addingPackage" status and when its done it sends us "none".
+  /// after its done we are getting all the packages again with the new package
+  /// that we just added.
+  ///
+  /// @param loadingType the type of loading that the AddNewPackage is sending.
+  ///
+  /// @return nothing
+  ///
   Future<void> handleNewPackageCallback(LoadingType loadingType) async {
     setState(() {
       _loadingType = loadingType;
