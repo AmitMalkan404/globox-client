@@ -8,6 +8,7 @@ import 'package:globox/services/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
 import 'package:globox/ui/widgets/new_package.dart';
+import 'package:globox/ui/widgets/screen_footer.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -84,6 +85,7 @@ class _AppState extends State<App> {
 
     if (_activeView == ScreenView.MapView) {
       screenWidget = PackageMapView(
+        // passing the packages with coordinates exclusively
         packages: this
             ._packages
             .where((pckg) => pckg.coordinates.isNotEmpty)
@@ -128,9 +130,11 @@ class _AppState extends State<App> {
               ),
             ),
           ),
-          FloatingActionButton(
-            onPressed: () => _openNewPackageModal(context),
-            child: const Icon(Icons.add),
+          ScreenFooter(
+            onAddPackageTap: () {
+              _openNewPackageModal(context);
+            },
+            onScanSMSTap: () {},
           ),
           SizedBox(
             height: 20,
