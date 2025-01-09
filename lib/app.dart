@@ -7,6 +7,7 @@ import 'package:globox/services/messages_service.dart';
 import 'package:globox/services/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
+import 'package:globox/ui/widgets/loader.dart';
 import 'package:globox/ui/widgets/new_package.dart';
 import 'package:globox/ui/widgets/screen_footer.dart';
 
@@ -22,6 +23,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   List<Package> _packages = [];
   var _activeView = ScreenView.ListView;
+  bool _isLoading = false;
+  LoadingType _loadingType = LoadingType.none;
   final MessagesService messagesService = MessagesService();
 
   @override
@@ -31,14 +34,19 @@ class _AppState extends State<App> {
   }
 
   Future<void> _initializeData() async {
-    await _loadMessages();
-    final packages = await loadPackages();
+    final packages = await _loadPackages();
     setState(() {
+      _isLoading = false;
       _packages = packages; // עדכון הסטייט
     });
   }
 
   Future<void> _loadMessages() async {
+    if (_isLoading) return;
+    setState(() {
+      _loadingType = LoadingType.sendingMessages;
+      _isLoading = true;
+    });
     final messagesService = MessagesService();
     await messagesService.getMessages(); // פעולה אסינכרונית
     var messageBodies = messagesService.messages
@@ -46,10 +54,22 @@ class _AppState extends State<App> {
         .where((body) => body != null) // סינון של null
         .cast<String>()
         .toList();
-    sendMessages(messageBodies);
+
+    await sendMessages(messageBodies);
+
+    final packages = await _loadPackages();
+    setState(() {
+      _packages = packages;
+      _loadingType = LoadingType.none;
+      _isLoading = false;
+    });
   }
 
-  Future<List<Package>> loadPackages() async {
+  Future<List<Package>> _loadPackages() async {
+    setState(() {
+      _loadingType = LoadingType.gettingPackages;
+      _isLoading = true;
+    });
     return await getPackages();
   }
 
@@ -60,6 +80,7 @@ class _AppState extends State<App> {
   }
 
   void _openNewPackageModal(BuildContext context) {
+    if (_isLoading) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -70,10 +91,27 @@ class _AppState extends State<App> {
           padding: EdgeInsets.only(
             bottom: bottomInset,
           ),
-          child: NewPackage(),
+          child: NewPackage(
+            newPackageCallback: handleNewPackageCallback,
+          ),
         );
       },
     );
+  }
+
+  Future<void> handleNewPackageCallback(LoadingType loadingType) async {
+    setState(() {
+      _loadingType = loadingType;
+      _isLoading = true;
+    });
+    if (_loadingType == LoadingType.none) {
+      final packages = await _loadPackages();
+      setState(() {
+        _loadingType = LoadingType.none;
+        _isLoading = false;
+        _packages = packages;
+      });
+    }
   }
 
   @override
@@ -124,15 +162,19 @@ class _AppState extends State<App> {
           Expanded(
             flex: 1,
             child: Center(
-              child: SizedBox(
-                width: screenWidth * 0.95,
-                child: screenWidget,
-              ),
+              child: _isLoading
+                  ? Loader(
+                      loadingType: _loadingType,
+                    )
+                  : SizedBox(
+                      width: screenWidth * 0.95,
+                      child: screenWidget,
+                    ),
             ),
           ),
           ScreenFooter(
             onAddPackageTap: _openNewPackageModal,
-            onScanSMSTap: () {},
+            onScanSMSTap: _loadMessages,
           ),
           SizedBox(
             height: 20,
