@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScreenFooter extends StatelessWidget {
-  final void Function() onAddPackageTap;
+  final void Function(BuildContext context) onAddPackageTap;
   final void Function() onScanSMSTap;
 
   const ScreenFooter({
@@ -18,7 +18,7 @@ class ScreenFooter extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 48.0, top: 16.0, bottom: 10.0),
           child: FloatingActionButton(
-            onPressed: () => this.onAddPackageTap,
+            onPressed: () => this.onAddPackageTap(context),
             child: const Icon(Icons.add),
           ),
         ),

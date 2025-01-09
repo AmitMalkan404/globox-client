@@ -131,9 +131,7 @@ class _AppState extends State<App> {
             ),
           ),
           ScreenFooter(
-            onAddPackageTap: () {
-              _openNewPackageModal(context);
-            },
+            onAddPackageTap: _openNewPackageModal,
             onScanSMSTap: () {},
           ),
           SizedBox(
