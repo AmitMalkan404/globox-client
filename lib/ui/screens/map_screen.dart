@@ -16,6 +16,11 @@ class PackageMapView extends StatefulWidget {
 }
 
 class _PackageMapView extends State<PackageMapView> {
+  LatLng? _currentLatLng;
+  double _currentZoom = 13.0;
+  final MapController _mapController =
+      MapController(); // MapController to control map
+
   void showPackageDetails(BuildContext context, Package package) {
     showModalBottomSheet(
       context: context,
@@ -30,22 +35,46 @@ class _PackageMapView extends State<PackageMapView> {
     );
   }
 
+  double getFocusedZoom() {
+    return _currentZoom < 19 ? _currentZoom + 1 : _currentZoom;
+  }
+
+  void handleMarkerSelection(Package pckg) {
+    setState(() {
+      if (LatLng(pckg.coordinates[0], pckg.coordinates[1]) == _currentLatLng) {
+        return;
+      }
+      _mapController.move(
+        LatLng(pckg.coordinates[0], pckg.coordinates[1]), // מרכז חדש
+        getFocusedZoom(),
+      );
+    });
+    showPackageDetails(context, pckg);
+  }
+
   @override
   Widget build(BuildContext context) {
     Marker buildMarker(Package pckg) {
       return MapMarker(
         pckg.packageId,
         LatLng(pckg.coordinates[0], pckg.coordinates[1]),
-        () {
-          showPackageDetails(context, pckg);
-        },
+        () => handleMarkerSelection(pckg),
       ).toMarker();
     }
 
     return FlutterMap(
+      mapController: _mapController,
       options: MapOptions(
         initialCenter: LatLng(32.1553, 34.898),
-        initialZoom: 13.0,
+        initialZoom: _currentZoom,
+        onPositionChanged: (position, hasGesture) {
+          // Fill your stream when your position changes
+          final zoom = position.zoom;
+          _currentLatLng = position.center;
+          if (zoom != null) {
+            _currentZoom = zoom;
+          }
+        },
       ),
       children: [
         TileLayer(
