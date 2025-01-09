@@ -25,7 +25,7 @@ class ScreenFooter extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 48.0, top: 16.0, bottom: 10.0),
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: onScanSMSTap,
             child: const Icon(Icons.refresh),
           ),
         ),

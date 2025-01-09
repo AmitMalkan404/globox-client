@@ -3,20 +3,27 @@ import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
 import 'package:globox/services/new_package.service.dart';
 
-class NewPackage extends StatefulWidget {
-  const NewPackage({
+class AddNewPackage extends StatefulWidget {
+  final void Function(LoadingType) newPackageCallback;
+
+  const AddNewPackage({
     super.key,
+    required this.newPackageCallback,
   });
 
   @override
-  State<NewPackage> createState() => _NewPackageState();
+  State<AddNewPackage> createState() => _AddNewPackageState();
 }
 
-class _NewPackageState extends State<NewPackage> {
+class _AddNewPackageState extends State<AddNewPackage> {
+  bool _isSubmitting = false;
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
 
   Future<void> _submitPackageData() async {
+    setState(() {
+      _isSubmitting = true;
+    });
     final enteredPackageId = _packageIdController.text.trim();
     final enteredDescription = _descriptionController.text.trim();
 
@@ -40,6 +47,9 @@ class _NewPackageState extends State<NewPackage> {
       return;
     }
 
+    // setting the loader to be on adding package loading view
+    widget.newPackageCallback(LoadingType.addingPackage);
+
     // קריאה לפונקציה המועברת דרך onAddPackage
     await addNewPackage(
       Package(
@@ -52,6 +62,12 @@ class _NewPackageState extends State<NewPackage> {
     );
 
     Navigator.pop(context); // סוגר את ה-modal
+
+    // setting the loader to be off as it finished adding the package
+    widget.newPackageCallback(LoadingType.none);
+    setState(() {
+      _isSubmitting = false;
+    });
   }
 
   @override
@@ -69,6 +85,7 @@ class _NewPackageState extends State<NewPackage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
+            readOnly: _isSubmitting,
             controller: _packageIdController,
             decoration: const InputDecoration(
               labelText: 'Package ID',
@@ -77,6 +94,7 @@ class _NewPackageState extends State<NewPackage> {
           ),
           const SizedBox(height: 16),
           TextField(
+            readOnly: _isSubmitting,
             controller: _descriptionController,
             decoration: const InputDecoration(
               labelText: 'Description',
@@ -89,12 +107,13 @@ class _NewPackageState extends State<NewPackage> {
             children: [
               TextButton(
                 onPressed: () {
+                  if (_isSubmitting) return;
                   Navigator.pop(context);
                 },
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: _submitPackageData,
+                onPressed: _isSubmitting ? () {} : _submitPackageData,
                 child: const Text('Save Package'),
               ),
             ],
