@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums.dart';
-import 'package:globox/services/delete_package.dart';
+import 'package:globox/services/queries/delete_package.dart';
 import '../../models/package.dart';
 
 class ListItem extends StatelessWidget {
