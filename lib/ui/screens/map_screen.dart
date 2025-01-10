@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_compass/flutter_map_compass.dart';
-import 'package:globox/ui/widgets/map_item.dart';
+import 'package:globox/ui/items/map_item.dart';
 import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
 import '../../models/package.dart';

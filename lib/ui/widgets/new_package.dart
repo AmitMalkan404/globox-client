@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
-import 'package:globox/services/new_package.service.dart';
+import 'package:globox/services/queries/new_package.service.dart';
 
 class AddNewPackage extends StatefulWidget {
   final void Function(LoadingType) newPackageCallback;
