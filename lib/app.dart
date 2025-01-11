@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
-import 'package:globox/models/package.dart';
-import 'package:globox/services/queries/get_packages.service.dart';
+import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/messages_service.dart';
 import 'package:globox/services/queries/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
@@ -10,6 +9,7 @@ import 'package:globox/ui/screens/map_screen.dart';
 import 'package:globox/ui/widgets/loader.dart';
 import 'package:globox/ui/widgets/new_package.dart';
 import 'package:globox/ui/widgets/screen_footer.dart';
+import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -21,32 +21,43 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  List<Package> _packages = [];
   var _activeView = ScreenView.ListView;
-  bool _isLoading = false;
-  LoadingType _loadingType = LoadingType.none;
   final MessagesService messagesService = MessagesService();
+  late AppState appState;
 
   @override
   void initState() {
     super.initState();
-    _initializeData(); // קריאה לפונקציה נפרדת
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appState =
+          Provider.of<AppState>(context, listen: false); // שמירה על האובייקט
+      _initializeData();
+    });
+  }
+
+  Future<void> loadPackages() async {
+    appState.updateLoadingType(LoadingType.gettingPackages);
+    appState.toggleLoading();
+
+    await appState.fetchPackagesFromServer();
   }
 
   Future<void> _initializeData() async {
-    final packages = await _loadPackages();
-    setState(() {
-      _isLoading = false;
-      _packages = packages; // עדכון הסטייט
-    });
+    await loadPackages();
+
+    // after finished init the data then it can remove loader
+
+    appState.updateLoadingType(LoadingType.none);
+    appState.toggleLoading();
   }
 
-  Future<void> _loadMessages() async {
-    if (_isLoading) return;
-    setState(() {
-      _loadingType = LoadingType.sendingMessages;
-      _isLoading = true;
-    });
+  Future<void> loadMessages() async {
+    if (appState.isLoading) return;
+
+    appState.updateLoadingType(LoadingType.sendingMessages);
+    appState.toggleLoading();
+
     final messagesService = MessagesService();
     await messagesService.getMessages(); // פעולה אסינכרונית
     var messageBodies = messagesService.messages
@@ -57,20 +68,9 @@ class _AppState extends State<App> {
 
     await sendMessages(messageBodies);
 
-    final packages = await _loadPackages();
-    setState(() {
-      _packages = packages;
-      _loadingType = LoadingType.none;
-      _isLoading = false;
-    });
-  }
-
-  Future<List<Package>> _loadPackages() async {
-    setState(() {
-      _loadingType = LoadingType.gettingPackages;
-      _isLoading = true;
-    });
-    return await getPackages();
+    await appState.fetchPackagesFromServer();
+    appState.updateLoadingType(LoadingType.none);
+    appState.toggleLoading();
   }
 
   void handleViewChange(int? index) {
@@ -80,7 +80,7 @@ class _AppState extends State<App> {
   }
 
   void _openNewPackageModal(BuildContext context) {
-    if (_isLoading) return;
+    if (appState.isLoading) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -91,51 +91,25 @@ class _AppState extends State<App> {
           padding: EdgeInsets.only(
             bottom: bottomInset,
           ),
-          child: AddNewPackage(
-            newPackageCallback: handleNewPackageCallback,
-          ),
+          child: AddNewPackage(),
         );
       },
     );
   }
 
-  /// AddNewPackage window is updating the app on each stage of adding the new
-  /// package. when its waiting for adding the package it sends us
-  /// "addingPackage" status and when its done it sends us "none".
-  /// after its done we are getting all the packages again with the new package
-  /// that we just added.
-  ///
-  /// @param loadingType the type of loading that the AddNewPackage is sending.
-  ///
-  /// @return nothing
-  ///
-  Future<void> handleNewPackageCallback(LoadingType loadingType) async {
-    setState(() {
-      _loadingType = loadingType;
-      _isLoading = true;
-    });
-    if (_loadingType == LoadingType.none) {
-      final packages = await _loadPackages();
-      setState(() {
-        _loadingType = LoadingType.none;
-        _isLoading = false;
-        _packages = packages;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+
     double screenWidth = MediaQuery.of(context).size.width;
     Widget screenWidget = PackagesListView(
-      packages: this._packages,
+      packages: appState.mainPackages,
     );
 
     if (_activeView == ScreenView.MapView) {
       screenWidget = PackageMapView(
         // passing the packages with coordinates exclusively
-        packages: this
-            ._packages
+        packages: appState.mainPackages
             .where((pckg) => pckg.coordinates.isNotEmpty)
             .toList(),
       );
@@ -172,9 +146,9 @@ class _AppState extends State<App> {
           Expanded(
             flex: 1,
             child: Center(
-              child: _isLoading
+              child: appState.isLoading
                   ? Loader(
-                      loadingType: _loadingType,
+                      loadingType: appState.loadingType,
                     )
                   : SizedBox(
                       width: screenWidth * 0.95,
@@ -184,7 +158,7 @@ class _AppState extends State<App> {
           ),
           ScreenFooter(
             onAddPackageTap: _openNewPackageModal,
-            onScanSMSTap: _loadMessages,
+            onScanSMSTap: loadMessages,
           ),
           SizedBox(
             height: 20,

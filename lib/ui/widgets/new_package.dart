@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
+import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/queries/new_package.service.dart';
+import 'package:provider/provider.dart';
 
 class AddNewPackage extends StatefulWidget {
-  final void Function(LoadingType) newPackageCallback;
-
   const AddNewPackage({
     super.key,
-    required this.newPackageCallback,
   });
 
   @override
@@ -16,59 +15,10 @@ class AddNewPackage extends StatefulWidget {
 }
 
 class _AddNewPackageState extends State<AddNewPackage> {
+  // uses for disabling the input/buttons when submitting the package
   bool _isSubmitting = false;
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
-
-  Future<void> _submitPackageData() async {
-    setState(() {
-      _isSubmitting = true;
-    });
-    final enteredPackageId = _packageIdController.text.trim();
-    final enteredDescription = _descriptionController.text.trim();
-
-    // ולידציה - בדיקה אם השדות מלאים
-    if (enteredPackageId.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Invalid input'),
-          content: const Text('Please enter a valid Package ID'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-              },
-              child: const Text('Okay'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
-
-    // setting the loader to be on adding package loading view
-    widget.newPackageCallback(LoadingType.addingPackage);
-
-    // קריאה לפונקציה המועברת דרך onAddPackage
-    await addNewPackage(
-      Package(
-        packageId: enteredPackageId,
-        description: enteredDescription,
-        address: '',
-        status: ShipmentStatus.noStatus,
-        coordinates: [],
-      ),
-    );
-
-    Navigator.pop(context); // סוגר את ה-modal
-
-    // setting the loader to be off as it finished adding the package
-    widget.newPackageCallback(LoadingType.none);
-    setState(() {
-      _isSubmitting = false;
-    });
-  }
 
   @override
   void dispose() {
@@ -79,6 +29,63 @@ class _AddNewPackageState extends State<AddNewPackage> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
+
+    Future<void> submitPackageData() async {
+      setState(() {
+        _isSubmitting = true;
+      });
+      final enteredPackageId = _packageIdController.text.trim();
+      final enteredDescription = _descriptionController.text.trim();
+
+      // ולידציה - בדיקה אם השדות מלאים
+      if (enteredPackageId.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('Invalid input'),
+            content: const Text('Please enter a valid Package ID'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text('Okay'),
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+
+      // setting the loader to be on adding package loading view
+      appState.toggleLoading();
+      appState.updateLoadingType(LoadingType.addingPackage);
+
+      // קריאה לפונקציה המועברת דרך onAddPackage
+      await addNewPackage(
+        Package(
+          packageId: enteredPackageId,
+          description: enteredDescription,
+          address: '',
+          status: ShipmentStatus.noStatus,
+          coordinates: [],
+        ),
+      );
+
+      appState.updateLoadingType(LoadingType.gettingPackages);
+
+      setState(() {
+        _isSubmitting = false;
+      });
+      Navigator.pop(context); // סוגר את ה-modal
+
+      // setting the loader to be off as it finished adding the package
+      await appState.fetchPackagesFromServer();
+      appState.updateLoadingType(LoadingType.none);
+      appState.toggleLoading();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -113,7 +120,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: _isSubmitting ? () {} : _submitPackageData,
+                onPressed: _isSubmitting ? () {} : submitPackageData,
                 child: const Text('Save Package'),
               ),
             ],
