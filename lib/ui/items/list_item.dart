@@ -1,42 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums.dart';
-import 'package:globox/services/queries/delete_package.dart';
+import 'package:globox/services/internal/app_state.dart';
+import 'package:provider/provider.dart';
 import '../../models/package.dart';
 
 class ListItem extends StatelessWidget {
   final Package package;
 
-  const ListItem({super.key, required Package this.package});
-
-  void _showDeleteDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Delete Package"),
-          content: Text("Are you sure you want to delete this package?"),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // close dialog
-              },
-              child: Text("Cancel"),
-            ),
-            TextButton(
-              onPressed: () async {
-                await deletePackage(package.packageId);
-                Navigator.of(context).pop(); // close dialog
-              },
-              child: Text("Delete"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  const ListItem({super.key, required this.package});
 
   @override
   Widget build(BuildContext context) {
+    final appState = Provider.of<AppState>(context);
     IconData getIconByShipmentStatus(ShipmentStatus status) {
       switch (status) {
         case ShipmentStatus.arrived:
@@ -46,6 +21,33 @@ class ListItem extends StatelessWidget {
         case ShipmentStatus.delivery:
           return Icons.local_shipping;
       }
+    }
+
+    void showDeleteDialog(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Delete Package"),
+            content: Text("Are you sure you want to delete this package?"),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // close dialog
+                },
+                child: Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: () async {
+                  appState.deleteItem(package.packageId);
+                  Navigator.of(context).pop(); // close dialog
+                },
+                child: Text("Delete"),
+              ),
+            ],
+          );
+        },
+      );
     }
 
     return Center(
@@ -76,7 +78,11 @@ class ListItem extends StatelessWidget {
               bottom: 8.0,
             ),
             child: ElevatedButton.icon(
-                onPressed: () => _showDeleteDialog(context),
+                onPressed: () {
+                  if (appState.loadingType != LoadingType.deletingPackage) {
+                    showDeleteDialog(context);
+                  }
+                },
                 label: Icon(Icons.delete)),
           )
         ],

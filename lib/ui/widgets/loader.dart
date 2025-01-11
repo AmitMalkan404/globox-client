@@ -16,6 +16,8 @@ class Loader extends StatelessWidget {
           return "Getting updated packages...";
         case LoadingType.sendingMessages:
           return "Scanning your messages...";
+        case LoadingType.deletingPackage:
+          return "Deleting package...";
         case LoadingType.none:
           return '';
       }
