@@ -7,6 +7,7 @@ Future<http.Response?> sendMessages(List<String> messages) async {
 
   try {
     final response = await http.post(
+      // Uri.parse('${dotenv.env['API_BASE_URL']}/api/send-messages'),
       Uri.parse('${dotenv.env['LOCAL_URL']}/api/send-messages'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
