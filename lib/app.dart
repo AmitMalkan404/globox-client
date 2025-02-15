@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/messages_service.dart';
@@ -9,6 +8,7 @@ import 'package:globox/ui/screens/map_screen.dart';
 import 'package:globox/ui/widgets/loader.dart';
 import 'package:globox/ui/widgets/new_package.dart';
 import 'package:globox/ui/widgets/screen_footer.dart';
+import 'package:globox/ui/widgets/side_drawer.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
@@ -116,33 +116,34 @@ class _AppState extends State<App> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Globox"),
+      ),
+      drawer: SideDrawer(),
       body: Column(
         children: [
           SizedBox(
-            height: 50,
+            height: 0,
           ),
           Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: FlutterToggleTab(
-                width: 50,
-                height: 60,
-                borderRadius: 15,
-                selectedTextStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600),
-                unSelectedTextStyle: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-                icons: [Icons.list, Icons.map],
-                iconSize: 30.0,
-                selectedLabelIndex: (index) {
-                  handleViewChange(index);
-                },
-                labels: ['', ''],
-                selectedIndex: _activeView.index,
-              )),
+            padding: const EdgeInsets.all(16.0),
+            child: ToggleButtons(
+              isSelected: [
+                _activeView == ScreenView.ListView,
+                _activeView == ScreenView.MapView,
+              ],
+              onPressed: (int index) {
+                setState(() {
+                  _activeView =
+                      (index == 0) ? ScreenView.ListView : ScreenView.MapView;
+                });
+              },
+              children: const <Widget>[
+                Icon(Icons.list),
+                Icon(Icons.map),
+              ],
+            ),
+          ),
           Expanded(
             flex: 1,
             child: Center(
