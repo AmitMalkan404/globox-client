@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:globox/register.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -60,7 +61,10 @@ class _AuthScreen extends State<AuthScreen> {
               ),
               TextButton(
                 onPressed: () {
-                  // Navigate to registration screen
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationScreen()));
                 },
                 child: Text('Don\'t have an account? Sign up!'),
               ),
