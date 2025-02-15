@@ -16,8 +16,20 @@ class _AuthScreen extends State<AuthScreen> {
   var _enteredPassword = '';
 
   void _submit() async {
-    final userCredentials = await _firebase.signInWithEmailAndPassword(
-        email: _enteredEmail, password: _enteredPassword);
+    try {
+      final userCredentials = await _firebase.signInWithEmailAndPassword(
+          email: _enteredEmail, password: _enteredPassword);
+    } on FirebaseAuthException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.message ?? "error"),
+          action: SnackBarAction(
+            label: 'Dismiss',
+            onPressed: () {},
+          ),
+        ),
+      );
+    }
   }
 
   @override
