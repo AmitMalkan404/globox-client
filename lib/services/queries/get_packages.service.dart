@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
 import 'package:http/http.dart' as http;
@@ -8,12 +9,13 @@ Future<List<Package>> getPackages() async {
   await dotenv.load();
 
   try {
-    var res = await http.get(
-      Uri.parse('${dotenv.env['LOCAL_URL']}/api/get-packages'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-    );
+    var res = await http.post(
+        Uri.parse('${dotenv.env['API_BASE_URL']}/api/get-packages'),
+        // Uri.parse('${dotenv.env['LOCAL_URL']}/api/get-packages'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(FirebaseAuth.instance.currentUser?.uid));
 
     // בדוק אם הבקשה הצליחה
     if (res.statusCode == 200) {

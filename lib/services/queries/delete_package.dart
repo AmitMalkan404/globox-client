@@ -8,8 +8,8 @@ Future<http.Response> deletePackage(String packageId) async {
   };
   await dotenv.load();
   return http.post(
-    // Uri.parse('${dotenv.env['API_BASE_URL']}/api/archive-package'),
-    Uri.parse('${dotenv.env['LOCAL_URL']}/api/archive-package'),
+    Uri.parse('${dotenv.env['API_BASE_URL']}/api/archive-package'),
+    // Uri.parse('${dotenv.env['LOCAL_URL']}/api/archive-package'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
