@@ -1,13 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
+import 'package:globox/services/internal/map_utils.dart';
 import 'package:globox/services/queries/delete_package.dart';
 import 'package:globox/services/queries/get_packages.service.dart';
+import 'package:latlong2/latlong.dart';
 
 class AppState with ChangeNotifier {
   List<Package> mainPackages = [];
   bool isLoading = false;
   LoadingType loadingType = LoadingType.none;
+  LatLng? currentPosition;
 
   AppState() {
     _initialize(); // קריאה לשרת בעת יצירת ה-AppState
@@ -17,6 +20,8 @@ class AppState with ChangeNotifier {
     if (mainPackages.isEmpty) {
       await fetchPackagesFromServer();
     }
+    currentPosition = await getCurrentLocation();
+    notifyListeners();
   }
 
   Future<void> fetchPackagesFromServer() async {
