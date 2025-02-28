@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_compass/flutter_map_compass.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:globox/services/internal/app_state.dart';
+import 'package:globox/services/internal/map_utils.dart';
 import 'package:globox/ui/items/map_item.dart';
 import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import '../../models/package.dart';
 
 class PackageMapView extends StatefulWidget {
@@ -16,10 +20,40 @@ class PackageMapView extends StatefulWidget {
 }
 
 class _PackageMapView extends State<PackageMapView> {
-  LatLng? _currentLatLng;
-  double _currentZoom = 13.0;
+  late AppState appState;
+  LatLng? _mapCenter;
+  LatLng? _currentPosition;
+  double _currentZoom = 15.0;
   final MapController _mapController =
       MapController(); // MapController to control map
+  bool _isInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isInitialized) {
+      appState = Provider.of<AppState>(context, listen: false);
+
+      if (appState.currentPosition == null) return;
+
+      _mapCenter = appState.currentPosition;
+      _currentPosition = appState.currentPosition;
+      _isInitialized = true;
+    }
+  }
+
+  Future<void> _handleLocationChange() async {
+    LatLng latLng = await getCurrentLocation();
+    setState(() {
+      _mapCenter = latLng;
+      _currentPosition = latLng;
+      _mapController.move(
+        latLng, // מרכז חדש
+        _currentZoom,
+      );
+    });
+  }
 
   void showPackageDetails(BuildContext context, Package package) {
     showModalBottomSheet(
@@ -41,7 +75,7 @@ class _PackageMapView extends State<PackageMapView> {
 
   void handleMarkerSelection(Package pckg) {
     setState(() {
-      if (LatLng(pckg.coordinates[0], pckg.coordinates[1]) == _currentLatLng) {
+      if (LatLng(pckg.coordinates[0], pckg.coordinates[1]) == _mapCenter) {
         return;
       }
       _mapController.move(
@@ -54,6 +88,12 @@ class _PackageMapView extends State<PackageMapView> {
 
   @override
   Widget build(BuildContext context) {
+    _mapCenter = appState.currentPosition;
+    _currentPosition = appState.currentPosition;
+
+    if (_mapCenter == null || _currentPosition == null) {
+      return const SizedBox(); // אפשר גם CircularProgressIndicator()
+    }
     Marker buildMarker(Package pckg) {
       return MapMarker(
         pckg.packageId,
@@ -65,12 +105,12 @@ class _PackageMapView extends State<PackageMapView> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        initialCenter: LatLng(32.1553, 34.898),
+        initialCenter: _mapCenter!,
         initialZoom: _currentZoom,
         onPositionChanged: (position, hasGesture) {
           // Fill your stream when your position changes
           final zoom = position.zoom;
-          _currentLatLng = position.center;
+          _mapCenter = position.center;
           if (zoom != null) {
             _currentZoom = zoom;
           }
@@ -89,9 +129,37 @@ class _PackageMapView extends State<PackageMapView> {
           hideIfRotatedNorth: true,
         ),
         MarkerLayer(
-            markers: widget.packages.map((pckg) {
-          return buildMarker(pckg);
-        }).toList())
+          markers: widget.packages.map((pckg) {
+            return buildMarker(pckg);
+          }).toList()
+            ..add(
+              Marker(
+                point: _currentPosition!, // נקודה מותאמת אישית
+                width: 80,
+                height: 80,
+                child: Icon(
+                  Icons.album_outlined,
+                  size: 40,
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+        ),
+        Positioned(
+          bottom: 20,
+          left: 20,
+          child: ElevatedButton(
+            onPressed: _handleLocationChange,
+            style: ElevatedButton.styleFrom(
+                shadowColor: Colors.transparent, // הסרת הצללים
+                elevation: 0, // הסרת האפקט של הרמה
+                padding: EdgeInsets.all(8)),
+            child: const Icon(
+              Icons.gps_fixed,
+              size: 50,
+            ),
+          ),
+        ),
       ],
     );
   }
