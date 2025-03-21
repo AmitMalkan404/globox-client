@@ -38,7 +38,7 @@ class _AppState extends State<App> {
 
   Future<void> loadPackages() async {
     appState.updateLoadingType(LoadingType.gettingPackages);
-    appState.toggleLoading();
+    appState.toggleLoading(true);
 
     await appState.fetchPackagesFromServer();
   }
@@ -49,28 +49,33 @@ class _AppState extends State<App> {
     // after finished init the data then it can remove loader
 
     appState.updateLoadingType(LoadingType.none);
-    appState.toggleLoading();
+    appState.toggleLoading(false);
   }
 
   Future<void> loadMessages() async {
     if (appState.isLoading) return;
 
-    appState.updateLoadingType(LoadingType.sendingMessages);
-    appState.toggleLoading();
+    try {
+      appState.updateLoadingType(LoadingType.sendingMessages);
+      appState.toggleLoading(true);
 
-    final messagesService = MessagesService();
-    await messagesService.getMessages(); // פעולה אסינכרונית
-    var messageBodies = messagesService.messages
-        .map((message) => message.body)
-        .where((body) => body != null) // סינון של null
-        .cast<String>()
-        .toList();
+      final messagesService = MessagesService();
+      await messagesService.getMessages(); // פעולה אסינכרונית
+      var messageBodies = messagesService.messages
+          .map((message) => message.body)
+          .where((body) => body != null) // סינון של null
+          .cast<String>()
+          .toList();
 
-    await sendMessages(messageBodies);
+      await sendMessages(messageBodies);
 
-    await appState.fetchPackagesFromServer();
-    appState.updateLoadingType(LoadingType.none);
-    appState.toggleLoading();
+      await appState.fetchPackagesFromServer();
+      appState.updateLoadingType(LoadingType.none);
+      appState.toggleLoading(false);
+    } catch (error) {
+      appState.updateLoadingType(LoadingType.none);
+      appState.toggleLoading(false);
+    }
   }
 
   void handleViewChange(int? index) {

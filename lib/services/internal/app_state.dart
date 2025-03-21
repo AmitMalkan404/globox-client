@@ -35,22 +35,22 @@ class AppState with ChangeNotifier {
 
   Future<void> deleteItem(String packageId) async {
     try {
-      toggleLoading();
+      toggleLoading(false);
       updateLoadingType(LoadingType.deletingPackage);
 
       await deletePackage(packageId); // מחיקה בשרת
       await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
 
-      toggleLoading();
       updateLoadingType(LoadingType.none);
+      toggleLoading(true);
     } catch (e) {
       print('Error deleting package: $e');
     }
   }
 
-  void toggleLoading() async {
+  void toggleLoading(value) async {
     try {
-      isLoading = !isLoading;
+      isLoading = value;
       notifyListeners(); // עדכון מקומי
     } catch (e) {
       print('Error toggling loading: $e');
