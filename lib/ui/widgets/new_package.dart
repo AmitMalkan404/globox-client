@@ -59,7 +59,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
       }
 
       // setting the loader to be on adding package loading view
-      appState.toggleLoading();
+      appState.toggleLoading(true);
       appState.updateLoadingType(LoadingType.addingPackage);
 
       // קריאה לפונקציה המועברת דרך onAddPackage
@@ -83,7 +83,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
       // setting the loader to be off as it finished adding the package
       await appState.fetchPackagesFromServer();
       appState.updateLoadingType(LoadingType.none);
-      appState.toggleLoading();
+      appState.toggleLoading(false);
     }
 
     return Padding(
