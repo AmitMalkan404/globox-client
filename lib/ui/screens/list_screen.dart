@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:globox/ui/items/list_item.dart';
-import '../../models/package.dart';
+import '../../models/classes/package.dart';
 
 class PackagesListView extends StatelessWidget {
   final List<Package> packages;

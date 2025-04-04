@@ -1,4 +1,4 @@
-import 'package:globox/models/enums.dart';
+import 'package:globox/models/enums/shipment_status.dart';
 
 class Package {
   final String packageId;

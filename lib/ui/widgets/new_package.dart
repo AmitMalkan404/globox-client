@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:globox/models/enums.dart';
-import 'package:globox/models/package.dart';
+import 'package:globox/models/enums/loading_type.dart';
+import 'package:globox/models/enums/shipment_status.dart';
+import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/queries/new_package.service.dart';
 import 'package:provider/provider.dart';

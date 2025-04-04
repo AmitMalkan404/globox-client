@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:globox/models/enums.dart';
+import 'package:globox/models/classes/package.dart';
+import 'package:globox/models/enums/loading_type.dart';
+import 'package:globox/models/enums/shipment_status.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:provider/provider.dart';
-import '../../models/package.dart';
 
 class ListItem extends StatelessWidget {
   final Package package;

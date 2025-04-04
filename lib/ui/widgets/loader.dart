@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:globox/models/enums.dart';
+import 'package:globox/models/enums/loading_type.dart';
 
 class Loader extends StatelessWidget {
   final LoadingType loadingType;
