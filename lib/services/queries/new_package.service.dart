@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:globox/config.dart';
-import 'package:globox/models/package.dart';
+import 'package:globox/models/classes/package.dart';
 import 'package:http/http.dart' as http;
 
 Future<http.Response> addNewPackage(Package package) async {

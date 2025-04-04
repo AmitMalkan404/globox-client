@@ -8,7 +8,7 @@ import 'package:globox/ui/items/map_item.dart';
 import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
-import '../../models/package.dart';
+import '../../models/classes/package.dart';
 
 class PackageMapView extends StatefulWidget {
   const PackageMapView({super.key, required this.packages});

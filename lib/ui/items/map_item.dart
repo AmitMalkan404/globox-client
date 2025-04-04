@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:globox/models/package.dart';
+import 'package:globox/models/classes/package.dart';
 
 class PackageDetailsWidget extends StatelessWidget {
   final Package package;

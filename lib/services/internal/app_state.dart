@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
-import 'package:globox/models/enums.dart';
-import 'package:globox/models/package.dart';
+import 'package:globox/models/enums/loading_type.dart';
+import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/map_utils.dart';
 import 'package:globox/services/queries/delete_package.dart';
 import 'package:globox/services/queries/get_packages.service.dart';
