@@ -1,17 +1,13 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:globox/config.dart';
 import 'package:globox/models/enums.dart';
 import 'package:globox/models/package.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<List<Package>> getPackages() async {
-  await dotenv.load();
-
   try {
-    var res = await http.post(
-        Uri.parse('${dotenv.env['API_BASE_URL']}/api/get-packages'),
-        // Uri.parse('${dotenv.env['LOCAL_URL']}/api/get-packages'),
+    var res = await http.post(Uri.parse('${AppConfig.apiUri}/api/get-packages'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
