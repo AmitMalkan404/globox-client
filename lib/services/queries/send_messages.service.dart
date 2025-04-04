@@ -1,19 +1,20 @@
 import 'dart:convert';
+import 'package:globox/config.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<http.Response?> sendMessages(List<String> messages) async {
-  await dotenv.load();
-
   try {
-    final response = await http.post(
-      // Uri.parse('${dotenv.env['API_BASE_URL']}/api/send-messages'),
-      Uri.parse('${dotenv.env['LOCAL_URL']}/api/send-messages'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(messages),
-    );
+    final response = await http
+        .post(
+          Uri.parse('${AppConfig.apiUri}/api/send-messages'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(messages),
+        )
+        .timeout(
+          const Duration(seconds: 10),
+        );
 
     // Checking if the call was successful
     if (response.statusCode >= 200 && response.statusCode < 300) {
