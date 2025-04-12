@@ -35,14 +35,14 @@ class AppState with ChangeNotifier {
 
   Future<void> deleteItem(String packageId) async {
     try {
-      toggleLoading(false);
+      toggleLoading(true);
       updateLoadingType(LoadingType.deletingPackage);
 
       await deletePackage(packageId); // מחיקה בשרת
       await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
 
       updateLoadingType(LoadingType.none);
-      toggleLoading(true);
+      toggleLoading(false);
     } catch (e) {
       print('Error deleting package: $e');
     }

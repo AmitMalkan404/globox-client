@@ -56,19 +56,25 @@ class ListItem extends StatelessWidget {
           child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 28.0,
-              top: 8.0,
-              bottom: 8.0,
+          ConstrainedBox(
+            constraints: const BoxConstraints(
+              minWidth: 250,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text(package.packageId),
-                Text(package.description),
-                Text(package.address),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 28.0,
+                top: 8.0,
+                bottom: 8.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(package.packageId),
+                  Text(package.description),
+                  Text(package.address),
+                ],
+              ),
             ),
           ),
           Icon(getIconByShipmentStatus(package.status)),

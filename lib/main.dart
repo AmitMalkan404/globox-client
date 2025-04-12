@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:globox/app.dart';
-import 'package:globox/auth.dart';
+import 'package:globox/login/auth.dart';
 import 'package:globox/firebase_options.dart';
+import 'package:globox/ui/theme.dart';
 import 'package:provider/provider.dart';
 import './services/internal/app_state.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,7 +21,7 @@ void main() async {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Globox',
-        theme: ThemeData(primarySwatch: Colors.blue),
+        theme: appTheme,
         home: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {

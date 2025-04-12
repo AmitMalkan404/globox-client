@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:globox/register.dart';
+import 'package:globox/login/register.dart';
+import 'package:globox/login/reset_password_screen.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -79,6 +80,19 @@ class _AuthScreen extends State<AuthScreen> {
                           builder: (context) => RegistrationScreen()));
                 },
                 child: Text('Don\'t have an account? Sign up!'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ResetPasswordScreen(
+                                onResetPassword: (email) => FirebaseAuth
+                                    .instance
+                                    .sendPasswordResetEmail(email: email),
+                              )));
+                },
+                child: Text('I forgot my password'),
               ),
             ],
           ),
