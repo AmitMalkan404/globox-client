@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/classes/package.dart';
 
-class PackageDetailsWidget extends StatelessWidget {
+class MapCardItem extends StatelessWidget {
   final Package package;
 
-  const PackageDetailsWidget({super.key, required this.package});
+  const MapCardItem({super.key, required this.package});
 
   @override
   Widget build(BuildContext context) {

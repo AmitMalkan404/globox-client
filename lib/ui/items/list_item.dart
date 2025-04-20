@@ -80,17 +80,25 @@ class ListItem extends StatelessWidget {
           Icon(getIconByShipmentStatus(package.status)),
           Padding(
             padding: const EdgeInsets.only(
-              right: 28.0,
+              right: 8.0,
               top: 8.0,
               bottom: 8.0,
             ),
-            child: ElevatedButton.icon(
+            child: TextButton.icon(
                 onPressed: () {
                   if (appState.loadingType != LoadingType.deletingPackage) {
                     showDeleteDialog(context);
                   }
                 },
-                label: Icon(Icons.delete)),
+                icon: Icon(
+                  Icons.delete,
+                  color: Color(0xFF00B8D9),
+                  size: 25,
+                ),
+                label: Text(
+                  '',
+                  style: TextStyle(color: Color(0xFF00B8D9)),
+                )),
           )
         ],
       )),
