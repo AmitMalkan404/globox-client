@@ -11,6 +11,7 @@ Future<http.Response> addNewPackage(Package package) async {
     "description": package.description,
     "status": package.status.index,
     "coordinates": package.coordinates,
+    "postOfficeCode": package.postOfficeCode,
     "uid": FirebaseAuth.instance.currentUser?.uid,
   };
 

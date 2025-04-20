@@ -70,6 +70,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
           description: enteredDescription,
           address: '',
           status: ShipmentStatus.noStatus,
+          postOfficeCode: '',
           coordinates: [],
         ),
       );
