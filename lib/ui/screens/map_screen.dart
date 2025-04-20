@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_compass/flutter_map_compass.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/map_utils.dart';
-import 'package:globox/ui/items/map_item.dart';
+import 'package:globox/ui/items/map_card_item.dart';
+import 'package:globox/ui/items/map_items_scroller.dart';
 import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +55,7 @@ class _PackageMapView extends State<PackageMapView> {
     });
   }
 
-  void showPackageDetails(BuildContext context, Package package) {
+  void showPackageDetails(BuildContext context, List<Package> packages) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -64,7 +64,7 @@ class _PackageMapView extends State<PackageMapView> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext ctx) {
-        return PackageDetailsWidget(package: package);
+        return HorizontalCardScroller(packagesForSingleLocation: packages);
       },
     );
   }
@@ -73,17 +73,17 @@ class _PackageMapView extends State<PackageMapView> {
     return _currentZoom < 19 ? _currentZoom + 1 : _currentZoom;
   }
 
-  void handleMarkerSelection(Package pckg) {
+  void handleGroupMarkerSelection(List<Package> packages) {
+    final first = packages.first;
+    final center = LatLng(first.coordinates[0], first.coordinates[1]);
+
     setState(() {
-      if (LatLng(pckg.coordinates[0], pckg.coordinates[1]) == _mapCenter) {
-        return;
+      if (_mapCenter != center) {
+        _mapController.move(center, getFocusedZoom());
       }
-      _mapController.move(
-        LatLng(pckg.coordinates[0], pckg.coordinates[1]), // מרכז חדש
-        getFocusedZoom(),
-      );
     });
-    showPackageDetails(context, pckg);
+
+    showPackageDetails(context, packages);
   }
 
   @override
@@ -94,12 +94,35 @@ class _PackageMapView extends State<PackageMapView> {
     if (_mapCenter == null || _currentPosition == null) {
       return const SizedBox(); // אפשר גם CircularProgressIndicator()
     }
-    Marker buildMarker(Package pckg) {
+
+    final groupedPackages = groupPackagesByCoordinates(widget.packages);
+
+    List<Marker> markers = groupedPackages.entries.map((entry) {
+      final coordinateParts = entry.key.split(',');
+      final lat = double.parse(coordinateParts[0]);
+      final lng = double.parse(coordinateParts[1]);
+
       return MapMarker(
-        pckg.packageId,
-        LatLng(pckg.coordinates[0], pckg.coordinates[1]),
-        () => handleMarkerSelection(pckg),
+        entry.value.first.packageId,
+        LatLng(lat, lng),
+        () => this.handleGroupMarkerSelection(entry.value),
       ).toMarker();
+    }).toList();
+
+    // ➕ הוספת המיקום הנוכחי של המשתמש (העיגול הכחול)
+    if (_currentPosition != null) {
+      markers.add(
+        Marker(
+          point: _currentPosition!,
+          width: 80,
+          height: 80,
+          child: const Icon(
+            Icons.album_outlined,
+            size: 40,
+            color: Colors.blue,
+          ),
+        ),
+      );
     }
 
     return FlutterMap(
@@ -128,23 +151,7 @@ class _PackageMapView extends State<PackageMapView> {
           icon: Icon(Icons.arrow_upward),
           hideIfRotatedNorth: true,
         ),
-        MarkerLayer(
-          markers: widget.packages.map((pckg) {
-            return buildMarker(pckg);
-          }).toList()
-            ..add(
-              Marker(
-                point: _currentPosition!, // נקודה מותאמת אישית
-                width: 80,
-                height: 80,
-                child: Icon(
-                  Icons.album_outlined,
-                  size: 40,
-                  color: Colors.blue,
-                ),
-              ),
-            ),
-        ),
+        MarkerLayer(markers: markers),
         Positioned(
           bottom: 20,
           left: 20,

@@ -1,5 +1,6 @@
 // פונקציה לקבלת המיקום הנוכחי
 import 'package:geolocator/geolocator.dart';
+import 'package:globox/models/classes/package.dart';
 import 'package:latlong2/latlong.dart';
 
 Future<LatLng> getCurrentLocation() async {
@@ -29,4 +30,20 @@ Future<LatLng> getCurrentLocation() async {
   );
 
   return LatLng(position.latitude, position.longitude);
+}
+
+Map<String, List<Package>> groupPackagesByCoordinates(List<Package> packages) {
+  Map<String, List<Package>> grouped = {};
+
+  for (var package in packages) {
+    final key =
+        "${package.coordinates[0].toStringAsFixed(5)},${package.coordinates[1].toStringAsFixed(5)}";
+
+    if (!grouped.containsKey(key)) {
+      grouped[key] = [];
+    }
+    grouped[key]!.add(package);
+  }
+
+  return grouped;
 }
