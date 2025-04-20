@@ -93,18 +93,15 @@ class MapCardItem extends StatelessWidget {
           // Status
           Row(
             children: [
-              Icon(Icons.info, color: Colors.orange),
+              Icon(Icons.code, color: Colors.orange),
               SizedBox(width: 10),
               Text(
-                "Status:",
+                "Post Office code:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
               Text(
-                package.status
-                    .toString()
-                    .split('.')
-                    .last, // Convert enum to string
+                package.postOfficeCode,
                 style: TextStyle(color: Colors.blue),
               ),
             ],
@@ -126,21 +123,6 @@ class MapCardItem extends StatelessWidget {
                 "${package.coordinates[0].toStringAsFixed(2)}, ${package.coordinates[1].toStringAsFixed(2)}",
               ),
             ],
-          ),
-
-          SizedBox(height: 20),
-
-          // Close Button
-          Center(
-            child: ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: Text("Close"),
-            ),
           ),
         ],
       ),

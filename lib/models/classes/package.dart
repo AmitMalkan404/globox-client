@@ -5,6 +5,7 @@ class Package {
   final String address;
   final String description;
   final ShipmentStatus status;
+  final String postOfficeCode;
   final List<double> coordinates;
   final DateTime? createdAt;
 
@@ -13,6 +14,7 @@ class Package {
       required this.address,
       required this.description,
       required this.status,
+      required this.postOfficeCode,
       required this.coordinates,
       this.createdAt});
 }
