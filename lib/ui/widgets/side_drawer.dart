@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SideDrawer extends StatelessWidget {
+  const SideDrawer({super.key});
+
   Future<void> signOutUser() async {
     try {
       await FirebaseAuth.instance.signOut();

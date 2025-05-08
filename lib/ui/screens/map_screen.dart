@@ -105,7 +105,7 @@ class _PackageMapView extends State<PackageMapView> {
       return MapMarker(
         entry.value.first.packageId,
         LatLng(lat, lng),
-        () => this.handleGroupMarkerSelection(entry.value),
+        () => handleGroupMarkerSelection(entry.value),
       ).toMarker();
     }).toList();
 

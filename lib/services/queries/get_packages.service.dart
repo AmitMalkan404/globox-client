@@ -25,6 +25,7 @@ Future<List<Package>> getPackages() async {
             address: pckg['address'],
             description: pckg['description'],
             postOfficeCode: pckg['postOfficeCode'] ?? '',
+            pickupPointName: pckg['pickupPointName'] ?? '',
             status:
                 intToShipmentStatus(pckg['status'] as int), // המרה מ-int ל-enum
             coordinates: (pckg['coordinates'] as List)

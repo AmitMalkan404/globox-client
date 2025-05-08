@@ -16,8 +16,6 @@ class AddNewPackage extends StatefulWidget {
 }
 
 class _AddNewPackageState extends State<AddNewPackage> {
-  // uses for disabling the input/buttons when submitting the package
-  bool _isSubmitting = false;
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
 
@@ -33,9 +31,6 @@ class _AddNewPackageState extends State<AddNewPackage> {
     final appState = Provider.of<AppState>(context);
 
     Future<void> submitPackageData() async {
-      setState(() {
-        _isSubmitting = true;
-      });
       final enteredPackageId = _packageIdController.text.trim();
       final enteredDescription = _descriptionController.text.trim();
 
@@ -59,6 +54,11 @@ class _AddNewPackageState extends State<AddNewPackage> {
         return;
       }
 
+      Navigator.pop(context); // closing the modal bottom sheet
+
+      // adding a small delay to allow the modal to close before showing the loader
+      await Future.delayed(Duration(milliseconds: 100));
+
       // setting the loader to be on adding package loading view
       appState.toggleLoading(true);
       appState.updateLoadingType(LoadingType.addingPackage);
@@ -71,16 +71,12 @@ class _AddNewPackageState extends State<AddNewPackage> {
           address: '',
           status: ShipmentStatus.noStatus,
           postOfficeCode: '',
+          pickupPointName: '',
           coordinates: [],
         ),
       );
 
       appState.updateLoadingType(LoadingType.gettingPackages);
-
-      setState(() {
-        _isSubmitting = false;
-      });
-      Navigator.pop(context); // סוגר את ה-modal
 
       // setting the loader to be off as it finished adding the package
       await appState.fetchPackagesFromServer();
@@ -94,7 +90,6 @@ class _AddNewPackageState extends State<AddNewPackage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
-            readOnly: _isSubmitting,
             controller: _packageIdController,
             decoration: const InputDecoration(
               labelText: 'Package ID',
@@ -103,7 +98,6 @@ class _AddNewPackageState extends State<AddNewPackage> {
           ),
           const SizedBox(height: 16),
           TextField(
-            readOnly: _isSubmitting,
             controller: _descriptionController,
             decoration: const InputDecoration(
               labelText: 'Description',
@@ -116,13 +110,12 @@ class _AddNewPackageState extends State<AddNewPackage> {
             children: [
               TextButton(
                 onPressed: () {
-                  if (_isSubmitting) return;
                   Navigator.pop(context);
                 },
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: _isSubmitting ? () {} : submitPackageData,
+                onPressed: submitPackageData,
                 child: const Text('Save Package'),
               ),
             ],

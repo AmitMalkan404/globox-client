@@ -60,7 +60,7 @@ class MapCardItem extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  package.address,
+                  '${package.pickupPointName}, ${package.address}',
                   overflow: TextOverflow.ellipsis,
                 ),
               ),

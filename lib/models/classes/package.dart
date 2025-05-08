@@ -6,15 +6,18 @@ class Package {
   final String description;
   final ShipmentStatus status;
   final String postOfficeCode;
+  final String pickupPointName;
   final List<double> coordinates;
   final DateTime? createdAt;
 
-  Package(
-      {required this.packageId,
-      required this.address,
-      required this.description,
-      required this.status,
-      required this.postOfficeCode,
-      required this.coordinates,
-      this.createdAt});
+  Package({
+    required this.packageId,
+    required this.address,
+    required this.description,
+    required this.status,
+    required this.postOfficeCode,
+    required this.pickupPointName,
+    required this.coordinates,
+    this.createdAt,
+  });
 }
