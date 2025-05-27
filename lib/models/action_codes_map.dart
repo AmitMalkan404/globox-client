@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+
+class ActionCodeInfo {
+  final String status;
+  final IconData icon;
+  final Color backgroundColor;
+
+  const ActionCodeInfo({
+    required this.status,
+    required this.icon,
+    required this.backgroundColor,
+  });
+}
+
+const Map<String, ActionCodeInfo> actionCodeMap = {
+  "GWMS_ACCEPT": ActionCodeInfo(
+    status: "Order Received",
+    icon: Icons.assignment_turned_in,
+    backgroundColor: Colors.grey,
+  ),
+  "GWMS_PACKAGE": ActionCodeInfo(
+    status: "Order Received",
+    icon: Icons.assignment_turned_in,
+    backgroundColor: Colors.grey,
+  ),
+  "PU_PICKUP_SUCCESS": ActionCodeInfo(
+    status: "Warehouse Processing",
+    icon: Icons.inventory_2,
+    backgroundColor: Colors.purpleAccent,
+  ),
+  "GWMS_OUTBOUND": ActionCodeInfo(
+    status: "Warehouse Processing",
+    icon: Icons.inventory_2,
+    backgroundColor: Colors.purpleAccent,
+  ),
+  "SC_INBOUND_SUCCESS": ActionCodeInfo(
+    status: "Sorting Center",
+    icon: Icons.sync_alt,
+    backgroundColor: Colors.deepPurpleAccent,
+  ),
+  "SC_OUTBOUND_SUCCESS": ActionCodeInfo(
+    status: "Sorting Center",
+    icon: Icons.sync_alt,
+    backgroundColor: Colors.deepPurpleAccent,
+  ),
+  "CC_EX_START": ActionCodeInfo(
+    status: "Export Customs",
+    icon: Icons.flight_takeoff,
+    backgroundColor: Colors.indigo,
+  ),
+  "CC_EX_SUCCESS": ActionCodeInfo(
+    status: "Export Customs",
+    icon: Icons.flight_takeoff,
+    backgroundColor: Colors.indigo,
+  ),
+  "LH_HO_IN_SUCCESS": ActionCodeInfo(
+    status: "In Transit to Destination Country",
+    icon: Icons.airplane_ticket,
+    backgroundColor: Colors.blue,
+  ),
+  "LH_HO_AIRLINE": ActionCodeInfo(
+    status: "In Transit to Destination Country",
+    icon: Icons.airplane_ticket,
+    backgroundColor: Colors.blue,
+  ),
+  "LH_DEPART": ActionCodeInfo(
+    status: "In Transit to Destination Country",
+    icon: Icons.airplane_ticket,
+    backgroundColor: Colors.blue,
+  ),
+  "LH_ARRIVE": ActionCodeInfo(
+    status: "Arrived at Destination Country",
+    icon: Icons.flag_circle,
+    backgroundColor: Colors.teal,
+  ),
+  "CC_HO_IN_SUCCESS": ActionCodeInfo(
+    status: "Import Customs",
+    icon: Icons.gavel,
+    backgroundColor: Colors.deepPurple,
+  ),
+  "CC_IM_START": ActionCodeInfo(
+    status: "Import Customs",
+    icon: Icons.gavel,
+    backgroundColor: Colors.deepPurple,
+  ),
+  "CC_IM_SUCCESS": ActionCodeInfo(
+    status: "Import Customs",
+    icon: Icons.gavel,
+    backgroundColor: Colors.deepPurple,
+  ),
+  "CC_HO_OUT_SUCCESS": ActionCodeInfo(
+    status: "Import Customs",
+    icon: Icons.gavel,
+    backgroundColor: Colors.deepPurple,
+  ),
+  "GTMS_ACCEPT": ActionCodeInfo(
+    status: "Received by Local Courier",
+    icon: Icons.local_shipping,
+    backgroundColor: Colors.orange,
+  ),
+  "GTMS_DO_DEPART": ActionCodeInfo(
+    status: "Out for Delivery",
+    icon: Icons.delivery_dining,
+    backgroundColor: Colors.deepOrange,
+  ),
+  "GTMS_STA_SIGN_FAILURE": ActionCodeInfo(
+    status: "Delivery Attempt Failed",
+    icon: Icons.report_problem,
+    backgroundColor: Colors.redAccent,
+  ),
+  "GTMS_STA_SIGNED": ActionCodeInfo(
+    status: "Available for Pick-Up",
+    icon: Icons.store_mall_directory,
+    backgroundColor: Colors.lightGreen,
+  ),
+  "GTMS_SIGNED": ActionCodeInfo(
+    status: "Delivered",
+    icon: Icons.mark_email_read,
+    backgroundColor: Colors.green,
+  ),
+  "EXCEPTION": ActionCodeInfo(
+    status: "Exception / Delay",
+    icon: Icons.error,
+    backgroundColor: Colors.red,
+  ),
+};

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
-import 'package:globox/models/enums/shipment_status.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/queries/new_package.service.dart';
@@ -69,7 +68,6 @@ class _AddNewPackageState extends State<AddNewPackage> {
           packageId: enteredPackageId,
           description: enteredDescription,
           address: '',
-          status: ShipmentStatus.noStatus,
           postOfficeCode: '',
           pickupPointName: '',
           coordinates: [],

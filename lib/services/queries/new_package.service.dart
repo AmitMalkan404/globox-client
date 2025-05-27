@@ -9,7 +9,6 @@ Future<http.Response> addNewPackage(Package package) async {
     "packageId": package.packageId,
     "address": package.address,
     "description": package.description,
-    "status": package.status.index,
     "coordinates": package.coordinates,
     "postOfficeCode": package.postOfficeCode,
     "pickupPointName": package.pickupPointName,

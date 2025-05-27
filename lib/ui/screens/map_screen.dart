@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_compass/flutter_map_compass.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/map_utils.dart';
-import 'package:globox/ui/items/map_card_item.dart';
 import 'package:globox/ui/items/map_items_scroller.dart';
 import 'package:globox/ui/widgets/marker.dart';
 import 'package:latlong2/latlong.dart';
@@ -28,6 +27,8 @@ class _PackageMapView extends State<PackageMapView> {
       MapController(); // MapController to control map
   bool _isInitialized = false;
 
+  /// Called when the widget's dependencies change.
+  /// Initializes [appState], [_mapCenter], and [_currentPosition] if not already initialized.
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -43,6 +44,7 @@ class _PackageMapView extends State<PackageMapView> {
     }
   }
 
+  /// Handles updating the map and user position to the current location.
   Future<void> _handleLocationChange() async {
     LatLng latLng = await getCurrentLocation();
     setState(() {
@@ -55,6 +57,7 @@ class _PackageMapView extends State<PackageMapView> {
     });
   }
 
+  /// Shows a modal bottom sheet with details for the given [packages].
   void showPackageDetails(BuildContext context, List<Package> packages) {
     showModalBottomSheet(
       context: context,
@@ -69,10 +72,12 @@ class _PackageMapView extends State<PackageMapView> {
     );
   }
 
+  /// Returns the zoom level to use when focusing on a marker.
   double getFocusedZoom() {
     return _currentZoom < 19 ? _currentZoom + 1 : _currentZoom;
   }
 
+  /// Handles selection of a group marker, moving the map and showing package details.
   void handleGroupMarkerSelection(List<Package> packages) {
     final first = packages.first;
     final center = LatLng(first.coordinates[0], first.coordinates[1]);
@@ -86,13 +91,14 @@ class _PackageMapView extends State<PackageMapView> {
     showPackageDetails(context, packages);
   }
 
+  /// Builds the map screen widget.
   @override
   Widget build(BuildContext context) {
     _mapCenter = appState.currentPosition;
     _currentPosition = appState.currentPosition;
 
     if (_mapCenter == null || _currentPosition == null) {
-      return const SizedBox(); // אפשר גם CircularProgressIndicator()
+      return const SizedBox(); // You can also use CircularProgressIndicator()
     }
 
     final groupedPackages = groupPackagesByCoordinates(widget.packages);
@@ -109,7 +115,7 @@ class _PackageMapView extends State<PackageMapView> {
       ).toMarker();
     }).toList();
 
-    // ➕ הוספת המיקום הנוכחי של המשתמש (העיגול הכחול)
+    // ➕ Add the user's current location (the blue circle)
     if (_currentPosition != null) {
       markers.add(
         Marker(
@@ -158,8 +164,8 @@ class _PackageMapView extends State<PackageMapView> {
           child: ElevatedButton(
             onPressed: _handleLocationChange,
             style: ElevatedButton.styleFrom(
-                shadowColor: Colors.transparent, // הסרת הצללים
-                elevation: 0, // הסרת האפקט של הרמה
+                shadowColor: Colors.transparent, // remove shadows
+                elevation: 0, // remove elevation effect
                 padding: EdgeInsets.all(8)),
             child: const Icon(
               Icons.gps_fixed,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:globox/models/action_codes_map.dart';
 import 'package:globox/models/classes/package.dart';
 
 class MapCardItem extends StatelessWidget {
@@ -91,6 +92,25 @@ class MapCardItem extends StatelessWidget {
           SizedBox(height: 10),
 
           // Status
+          Row(
+            children: [
+              Icon(Icons.code, color: const Color.fromARGB(255, 22, 111, 212)),
+              SizedBox(width: 10),
+              Text(
+                "Status:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(width: 10),
+              Text(
+                actionCodeMap[package.actionCode]?.status ?? "Unknown",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 10),
+
+          // postOfficeCode
           Row(
             children: [
               Icon(Icons.code, color: Colors.orange),
