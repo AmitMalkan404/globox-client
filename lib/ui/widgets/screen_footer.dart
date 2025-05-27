@@ -19,7 +19,7 @@ class ScreenFooter extends StatelessWidget {
           padding: const EdgeInsets.only(left: 48.0, top: 16.0, bottom: 10.0),
           child: FloatingActionButton(
             heroTag: "add_package_fab",
-            onPressed: () => this.onAddPackageTap(context),
+            onPressed: () => onAddPackageTap(context),
             child: const Icon(Icons.add),
           ),
         ),

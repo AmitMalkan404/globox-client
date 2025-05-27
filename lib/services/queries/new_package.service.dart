@@ -9,17 +9,20 @@ Future<http.Response> addNewPackage(Package package) async {
     "packageId": package.packageId,
     "address": package.address,
     "description": package.description,
-    "status": package.status.index,
     "coordinates": package.coordinates,
     "postOfficeCode": package.postOfficeCode,
+    "pickupPointName": package.pickupPointName,
     "uid": FirebaseAuth.instance.currentUser?.uid,
   };
-
-  return await http.post(
-    Uri.parse('${AppConfig.apiUri}/api/new-package'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: jsonEncode(data),
-  );
+  try {
+    return await http.post(
+      Uri.parse('${AppConfig.apiUri}/api/new-package'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+  } catch (e) {
+    throw Exception('Failed to add new package: $e');
+  }
 }

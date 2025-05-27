@@ -61,10 +61,10 @@ class _AppState extends State<App> {
       appState.toggleLoading(true);
 
       final messagesService = MessagesService();
-      await messagesService.getMessages(); // פעולה אסינכרונית
+      await messagesService.getMessages();
       var messageBodies = messagesService.messages
           .map((message) => message.body)
-          .where((body) => body != null) // סינון של null
+          .where((body) => body != null)
           .cast<String>()
           .toList();
 

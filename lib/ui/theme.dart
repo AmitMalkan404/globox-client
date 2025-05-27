@@ -7,7 +7,7 @@ final ThemeData appTheme = ThemeData(
   colorScheme: ColorScheme.dark(
     primary: Color(0xFF00B8D9),
     secondary: Color(0xFF1FC195),
-    background: Color(0xFF0B1C2C),
+    surface: Color(0xFF0B1C2C),
   ),
   textTheme: TextTheme(
     titleLarge: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),

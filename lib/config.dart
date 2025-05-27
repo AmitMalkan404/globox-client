@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConfig {
-  static const bool isProduction = true;
+  static const bool isProduction = true; // Set to true for production
 
   static String get apiUri {
     final url =

@@ -1,16 +1,22 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:globox/config.dart';
 import 'package:http/http.dart' as http;
 
 Future<http.Response?> sendMessages(List<String> messages) async {
+  final user = FirebaseAuth.instance.currentUser;
+
   try {
+    if (user == null) {
+      throw Exception('No user is signed in');
+    }
     final response = await http
         .post(
           Uri.parse('${AppConfig.apiUri}/api/send-messages'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(messages),
+          body: jsonEncode({"uid": user.uid, "messages": messages}),
         )
         .timeout(
           const Duration(seconds: 10),

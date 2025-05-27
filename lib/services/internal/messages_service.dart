@@ -25,7 +25,7 @@ class MessagesService {
         address: null,
         count: 1000,
       );
-      this._messages = messages;
+      _messages = messages;
     } else {
       await Permission.sms.request();
     }
