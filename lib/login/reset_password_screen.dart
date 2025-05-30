@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final Future<void> Function(String email) onResetPassword;
@@ -17,8 +19,38 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
+    Future<void> _submit() async {
+      if (!_formKey.currentState!.validate()) return;
+
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      try {
+        await widget.onResetPassword(_emailController.text.trim());
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(tr.sentResetPasswordLink)),
+          );
+
+          Navigator.of(context).pop(); // ✅ סוגר את המסך
+        }
+      } catch (err) {
+        setState(() {
+          _error = err.toString();
+        });
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('איפוס סיסמה')),
+      appBar: AppBar(title: Text(tr.resetPassword)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -34,11 +66,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ],
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'אימייל'),
+                decoration: InputDecoration(labelText: tr.email),
                 keyboardType: TextInputType.emailAddress,
-                validator: (value) => value != null && value.contains('@')
-                    ? null
-                    : 'נא להזין אימייל תקין',
+                validator: (value) =>
+                    value != null && value.contains('@') ? null : tr.emailError,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -49,41 +80,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         width: 20,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Text('שלח לינק לאיפוס סיסמה'),
+                    : Text(tr.sendResetPasswordLink),
               ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
-
-    try {
-      await widget.onResetPassword(_emailController.text.trim());
-
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('לינק לאיפוס סיסמה נשלח!')),
-        );
-
-        Navigator.of(context).pop(); // ✅ סוגר את המסך
-      }
-    } catch (err) {
-      setState(() {
-        _error = err.toString();
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
   }
 }

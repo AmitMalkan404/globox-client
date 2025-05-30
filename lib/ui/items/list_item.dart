@@ -3,8 +3,10 @@ import 'package:globox/models/classes/package.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/action_codes_map.dart';
 import 'package:globox/services/internal/app_state.dart';
+import 'package:globox/services/internal/text_utils.dart';
 import 'package:globox/ui/widgets/message_dialog_button.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListItem extends StatefulWidget {
   final Package package;
@@ -25,22 +27,23 @@ class _ListItemState extends State<ListItem> {
   }
 
   void _showDeleteDialog(BuildContext context, AppState appState) {
+    final tr = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Delete Package"),
-        content: const Text("Are you sure you want to delete this package?"),
+        title: Text(tr.deletePackage),
+        content: Text(tr.deletePackageConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text("Cancel"),
+            child: Text(tr.cancel),
           ),
           TextButton(
             onPressed: () {
               appState.deleteItem(widget.package.packageId);
               Navigator.of(context).pop();
             },
-            child: const Text("Delete"),
+            child: Text(tr.delete),
           ),
         ],
       ),
@@ -50,20 +53,21 @@ class _ListItemState extends State<ListItem> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
+    final tr = AppLocalizations.of(context)!;
     final pkg = widget.package;
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     final details = <String, dynamic>{
-      "Description": pkg.description,
-      "Address": pkg.address,
-      "Pickup Point": pkg.pickupPointName,
-      "Post Office Code": pkg.postOfficeCode,
-      "Status": pkg.statusDesc,
-      "Details": pkg.statusDetailedDesc,
-      "Last Update": pkg.time,
-      "Origin": pkg.originCountry,
-      "Destination": pkg.destCountry,
-      "Contact Details": pkg.contactDetails,
+      tr.description: pkg.description,
+      tr.address: pkg.address,
+      tr.pickupPoint: pkg.pickupPointName,
+      tr.postOfficeCode: pkg.postOfficeCode,
+      tr.status: pkg.statusDesc,
+      tr.details: pkg.statusDetailedDesc,
+      tr.lastUpdate: formatDateTime(pkg.time!),
+      tr.origin: pkg.originCountry,
+      tr.destination: pkg.destCountry,
+      tr.contactDetails: pkg.contactDetails,
     };
 
     final detailWidgets = details.entries
@@ -92,6 +96,7 @@ class _ListItemState extends State<ListItem> {
     final cardColor =
         actionInfo?.backgroundColor.withAlpha((0.5 * 255).toInt()) ??
             Colors.grey.withAlpha((0.05 * 255).toInt());
+    final statusKey = actionInfo?.status;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -126,18 +131,18 @@ class _ListItemState extends State<ListItem> {
                             fontSize: 16,
                           ),
                         ),
-                        if (pkg.statusDetailedDesc != null &&
-                            pkg.statusDetailedDesc!.trim().isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4.0),
-                            child: Text(
-                              pkg.statusDetailedDesc!,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.white,
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Text(
+                            actionCodeMap[pkg.actionCode]?.status(context) ??
+                                pkg.statusDesc ??
+                                tr.status_unknown,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white,
                             ),
                           ),
+                        ),
                       ],
                     ),
                   ),

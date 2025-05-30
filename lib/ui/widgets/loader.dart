@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Loader extends StatelessWidget {
   final LoadingType loadingType;
@@ -8,16 +9,18 @@ class Loader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
+
     String getTextByLoadingType() {
       switch (loadingType) {
         case LoadingType.addingPackage:
-          return "Adding your package...";
+          return tr.addingYourPackageLoader;
         case LoadingType.gettingPackages:
-          return "Getting updated packages...";
+          return tr.gettingUpdatedPackagesLoader;
         case LoadingType.sendingMessages:
-          return "Scanning your messages...";
+          return tr.scanningYourMessagesLoader;
         case LoadingType.deletingPackage:
-          return "Deleting package...";
+          return tr.deletingPackageLoader;
         case LoadingType.none:
           return '';
       }
