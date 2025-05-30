@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'package:globox/ui/screens/settings_screen.dart'; // Import the SettingsScreen from the correct path
 
 class SideDrawer extends StatelessWidget {
   const SideDrawer({super.key});
@@ -15,6 +18,7 @@ class SideDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -26,8 +30,7 @@ class SideDrawer extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 30,
-                  backgroundImage: NetworkImage(
-                      "https://files.oaiusercontent.com/file-3vN4vUCcv8tepr8ubW4Bnv?se=2025-02-14T22%3A47%3A41Z&sp=r&sv=2024-08-04&sr=b&rscc=max-age%3D604800%2C%20immutable%2C%20private&rscd=attachment%3B%20filename%3D0166a693-2259-4c39-8fdc-6e17eba70e6d.webp&sig=GWMIiTB5fYiLdqDrr4Hgj9sd3dC/XDGaOaZ3Vh1XBpk%3D"),
+                  backgroundColor: Colors.white,
                 ),
                 SizedBox(height: 10),
                 // Text("User Name",
@@ -38,8 +41,35 @@ class SideDrawer extends StatelessWidget {
             ),
           ),
           _buildDrawerItem(
+            icon: Icons.info_outline,
+            text: tr.about,
+            onTap: () {
+              showAboutDialog(
+                context: context,
+                applicationName: 'Globox',
+                applicationVersion: '1.0.0',
+                applicationIcon: Icon(Icons.info_outline),
+                children: [
+                  Text('Globox app\n© 2025'),
+                ],
+              );
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings,
+            text: tr.settings,
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SettingsScreen(),
+                ),
+              );
+            },
+          ),
+          _buildDrawerItem(
             icon: Icons.logout,
-            text: "Logout",
+            text: tr.logout,
             onTap: signOutUser,
           ),
         ],

@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/queries/new_package.service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddNewPackage extends StatefulWidget {
   const AddNewPackage({
@@ -28,24 +31,31 @@ class _AddNewPackageState extends State<AddNewPackage> {
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
+    final tr = AppLocalizations.of(context)!;
 
     Future<void> submitPackageData() async {
       final enteredPackageId = _packageIdController.text.trim();
       final enteredDescription = _descriptionController.text.trim();
-
-      // ולידציה - בדיקה אם השדות מלאים
+      String? errorMsg;
       if (enteredPackageId.isEmpty) {
+        errorMsg = tr.invalidPackageIDMsg;
+      } else if (appState.mainPackages
+          .any((pkg) => pkg.packageId == enteredPackageId)) {
+        errorMsg = tr.duplicatePackageIDMsg;
+      }
+
+      if (errorMsg != null) {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Invalid input'),
-            content: const Text('Please enter a valid Package ID'),
+            title: Text(tr.invalidInput),
+            content: Text(errorMsg!),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(ctx);
                 },
-                child: const Text('Okay'),
+                child: Text(tr.okay),
               ),
             ],
           ),
@@ -89,16 +99,16 @@ class _AddNewPackageState extends State<AddNewPackage> {
         children: [
           TextField(
             controller: _packageIdController,
-            decoration: const InputDecoration(
-              labelText: 'Package ID',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: tr.packageId,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _descriptionController,
-            decoration: const InputDecoration(
-              labelText: 'Description',
+            decoration: InputDecoration(
+              labelText: tr.description,
               border: OutlineInputBorder(),
             ),
           ),
@@ -110,11 +120,11 @@ class _AddNewPackageState extends State<AddNewPackage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Cancel'),
+                child: Text(tr.cancel),
               ),
               ElevatedButton(
                 onPressed: submitPackageData,
-                child: const Text('Save Package'),
+                child: Text(tr.savePackage),
               ),
             ],
           ),

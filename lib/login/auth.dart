@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:globox/login/register.dart';
 import 'package:globox/login/reset_password_screen.dart';
+import 'package:globox/services/internal/app_state.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -16,16 +19,18 @@ class _AuthScreen extends State<AuthScreen> {
   var _enteredEmail = '';
   var _enteredPassword = '';
 
-  void _submit() async {
+  void _submit(BuildContext context) async {
+    final tr = AppLocalizations.of(context)!;
+
     try {
       final userCredentials = await _firebase.signInWithEmailAndPassword(
           email: _enteredEmail, password: _enteredPassword);
     } on FirebaseAuthException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(error.message ?? "error"),
+          content: Text(error.message ?? tr.error),
           action: SnackBarAction(
-            label: 'Dismiss',
+            label: tr.dismiss,
             onPressed: () {},
           ),
         ),
@@ -35,6 +40,8 @@ class _AuthScreen extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<AppState>();
+    final tr = AppLocalizations.of(context)!;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -43,13 +50,13 @@ class _AuthScreen extends State<AuthScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Welcome to Globox!',
+                tr.welcome,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 20),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Email',
+                  labelText: tr.email,
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
@@ -60,7 +67,7 @@ class _AuthScreen extends State<AuthScreen> {
               TextField(
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: tr.password,
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value) {
@@ -69,8 +76,8 @@ class _AuthScreen extends State<AuthScreen> {
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submit,
-                child: Text('Login'),
+                onPressed: () => _submit(context),
+                child: Text(tr.login),
               ),
               TextButton(
                 onPressed: () {
@@ -79,7 +86,7 @@ class _AuthScreen extends State<AuthScreen> {
                       MaterialPageRoute(
                           builder: (context) => RegistrationScreen()));
                 },
-                child: Text('Don\'t have an account? Sign up!'),
+                child: Text(tr.dontHavePassword),
               ),
               TextButton(
                 onPressed: () {
@@ -92,7 +99,7 @@ class _AuthScreen extends State<AuthScreen> {
                                     .sendPasswordResetEmail(email: email),
                               )));
                 },
-                child: Text('I forgot my password'),
+                child: Text(tr.forgotPassword),
               ),
             ],
           ),

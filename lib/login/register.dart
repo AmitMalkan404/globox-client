@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -17,11 +19,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  Future<void> _register() async {
+  Future<void> _register(BuildContext context) async {
+    final tr = AppLocalizations.of(context)!;
     if (_formKey.currentState!.validate()) {
       var snackbarMsg = '';
       try {
-        snackbarMsg = 'Successfuly registered!';
+        snackbarMsg = tr.successfullyRegistered;
         final registerResult =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text,
@@ -38,7 +41,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         SnackBar(
           content: Text(snackbarMsg),
           action: SnackBarAction(
-            label: 'Dismiss',
+            label: tr.dismiss,
             onPressed: () {
               // Code to execute.
             },
@@ -50,8 +53,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text("רישום")),
+      appBar: AppBar(title: Text(tr.register)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -60,62 +64,64 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: "שם מלא"),
+                decoration: InputDecoration(labelText: tr.fullName),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "נא להזין שם מלא";
+                    return tr.fullNameError;
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _emailController,
-                decoration: InputDecoration(labelText: "אימייל"),
+                decoration: InputDecoration(labelText: tr.email),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty || !value.contains('@')) {
-                    return "נא להזין אימייל תקף";
+                    return tr.emailError;
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _confirmEmailController,
-                decoration: InputDecoration(labelText: "אישור אימייל"),
+                decoration: InputDecoration(labelText: tr.emailConfirm),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value != _emailController.text) {
-                    return "האימיילים אינם תואמים";
+                    return tr.emailConfirmError;
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _passwordController,
-                decoration: InputDecoration(labelText: "סיסמה"),
+                decoration: InputDecoration(labelText: tr.password),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.length < 6) {
-                    return "הסיסמה חייבת להכיל לפחות 6 תווים";
+                    return tr.passwordError;
                   }
                   return null;
                 },
               ),
               TextFormField(
                 controller: _confirmPasswordController,
-                decoration: InputDecoration(labelText: "אישור סיסמה"),
+                decoration: InputDecoration(labelText: tr.passwordConfirm),
                 obscureText: true,
                 validator: (value) {
                   if (value != _passwordController.text) {
-                    return "הסיסמאות אינן תואמות";
+                    return tr.passwordConfirmError;
                   }
                   return null;
                 },
               ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _register,
-                child: Text("הירשם"),
+                onPressed: () {
+                  _register(context);
+                },
+                child: Text(tr.register),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:globox/models/action_codes_map.dart';
 import 'package:globox/models/classes/package.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MapCardItem extends StatelessWidget {
   final Package package;
@@ -9,6 +10,7 @@ class MapCardItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tr = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -23,7 +25,7 @@ class MapCardItem extends StatelessWidget {
           // Title
           Center(
             child: Text(
-              "Package Details",
+              "${tr.packageDetails}:",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -39,7 +41,7 @@ class MapCardItem extends StatelessWidget {
               Icon(Icons.tag, color: Colors.blue),
               SizedBox(width: 10),
               Text(
-                "Package ID:",
+                "${tr.packageId}:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
@@ -55,7 +57,7 @@ class MapCardItem extends StatelessWidget {
               Icon(Icons.location_on, color: Colors.red),
               SizedBox(width: 10),
               Text(
-                "Address:",
+                "${tr.address}:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
@@ -76,7 +78,7 @@ class MapCardItem extends StatelessWidget {
               Icon(Icons.description, color: Colors.green),
               SizedBox(width: 10),
               Text(
-                "Description:",
+                "${tr.description}:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
@@ -97,12 +99,12 @@ class MapCardItem extends StatelessWidget {
               Icon(Icons.code, color: const Color.fromARGB(255, 22, 111, 212)),
               SizedBox(width: 10),
               Text(
-                "Status:",
+                "${tr.status}:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
               Text(
-                actionCodeMap[package.actionCode]?.status ?? "Unknown",
+                actionCodeMap[package.actionCode]!.status(context),
                 style: TextStyle(color: Colors.blue),
               ),
             ],
@@ -116,31 +118,13 @@ class MapCardItem extends StatelessWidget {
               Icon(Icons.code, color: Colors.orange),
               SizedBox(width: 10),
               Text(
-                "Post Office code:",
+                "${tr.postOfficeCode}:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 10),
               Text(
                 package.postOfficeCode,
                 style: TextStyle(color: Colors.blue),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 10),
-
-          // Coordinates
-          Row(
-            children: [
-              Icon(Icons.map, color: Colors.purple),
-              SizedBox(width: 10),
-              Text(
-                "Coordinates:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 10),
-              Text(
-                "${package.coordinates[0].toStringAsFixed(2)}, ${package.coordinates[1].toStringAsFixed(2)}",
               ),
             ],
           ),
