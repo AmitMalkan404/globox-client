@@ -40,7 +40,8 @@ class _ListItemState extends State<ListItem> {
           ),
           TextButton(
             onPressed: () {
-              appState.deleteItem(widget.package.packageId);
+              appState.deleteItem(
+                  widget.package.packageId, widget.package.firestoreId);
               Navigator.of(context).pop();
             },
             child: Text(tr.delete),

@@ -1,5 +1,6 @@
 class Package {
   final String packageId;
+  final String firestoreId;
   final String address;
   final String description;
   final String postOfficeCode;
@@ -19,6 +20,7 @@ class Package {
 
   Package({
     required this.packageId,
+    required this.firestoreId,
     required this.address,
     required this.description,
     required this.postOfficeCode,

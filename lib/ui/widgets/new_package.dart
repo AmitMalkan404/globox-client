@@ -84,6 +84,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
           postOfficeCode: '',
           pickupPointName: '',
           coordinates: [],
+          firestoreId: '',
         ),
       );
 

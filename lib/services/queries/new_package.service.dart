@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 Future<http.Response> addNewPackage(Package package) async {
   var data = {
     "packageId": package.packageId,
+    "fireStoreId": package.firestoreId,
     "address": package.address,
     "description": package.description,
     "coordinates": package.coordinates,
@@ -15,13 +16,17 @@ Future<http.Response> addNewPackage(Package package) async {
     "uid": FirebaseAuth.instance.currentUser?.uid,
   };
   try {
-    return await http.post(
-      Uri.parse('${AppConfig.apiUri}/api/new-package'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(data),
-    );
+    return await http
+        .post(
+          Uri.parse('${AppConfig.apiUri}/api/new-package'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(data),
+        )
+        .timeout(
+          Duration(seconds: 3000),
+        );
   } catch (e) {
     throw Exception('Failed to add new package: $e');
   }

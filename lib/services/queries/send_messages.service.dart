@@ -19,7 +19,7 @@ Future<http.Response?> sendMessages(List<String> messages) async {
           body: jsonEncode({"uid": user.uid, "messages": messages}),
         )
         .timeout(
-          const Duration(seconds: 30000),
+          Duration(seconds: 3000),
         );
 
     // Checking if the call was successful
