@@ -13,23 +13,18 @@ class ScreenFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 48.0, top: 16.0, bottom: 10.0),
-          child: FloatingActionButton(
-            heroTag: "add_package_fab",
-            onPressed: () => onAddPackageTap(context),
-            child: const Icon(Icons.add),
-          ),
+        FloatingActionButton(
+          heroTag: "add_package_fab",
+          onPressed: () => onAddPackageTap(context),
+          child: const Icon(Icons.add),
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 48.0, top: 16.0, bottom: 10.0),
-          child: FloatingActionButton(
-            heroTag: "scan_sms_fab",
-            onPressed: onScanSMSTap,
-            child: const Icon(Icons.refresh),
-          ),
+        const SizedBox(width: 24), // Add gap between buttons
+        FloatingActionButton(
+          heroTag: "scan_sms_fab",
+          onPressed: onScanSMSTap,
+          child: const Icon(Icons.refresh),
         ),
       ],
     );

@@ -39,8 +39,11 @@ class MessageDialogButton extends StatelessWidget {
       }
     }
 
-    return ElevatedButton(
-      child: Icon(Icons.message),
+    return IconButton(
+      icon: CircleAvatar(
+        backgroundColor: Colors.transparent,
+        child: Icon(Icons.message, color: Colors.cyan),
+      ),
       onPressed: () {
         showDialog(
           context: context,

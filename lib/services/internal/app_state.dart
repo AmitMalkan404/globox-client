@@ -20,9 +20,9 @@ class AppState with ChangeNotifier {
   }
 
   void _initialize() async {
-    if (mainPackages.isEmpty) {
-      await fetchPackagesFromServer();
-    }
+    // if (mainPackages.isEmpty) {
+    //   await fetchPackagesFromServer();
+    // }
     currentPosition = await getCurrentLocation();
     notifyListeners();
   }
@@ -38,12 +38,12 @@ class AppState with ChangeNotifier {
     }
   }
 
-  Future<void> deleteItem(String packageId) async {
+  Future<void> deleteItem(String packageId, String firestoreId) async {
     try {
       toggleLoading(true);
       updateLoadingType(LoadingType.deletingPackage);
 
-      await deletePackage(packageId); // מחיקה בשרת
+      await deletePackage(packageId, firestoreId); // מחיקה בשרת
       await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
 
       updateLoadingType(LoadingType.none);

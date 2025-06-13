@@ -164,9 +164,11 @@ class _PackageMapView extends State<PackageMapView> {
           child: ElevatedButton(
             onPressed: _handleLocationChange,
             style: ElevatedButton.styleFrom(
-                shadowColor: Colors.transparent, // remove shadows
-                elevation: 0, // remove elevation effect
-                padding: EdgeInsets.all(8)),
+              shadowColor: Colors.transparent, // remove shadows
+              elevation: 0, // remove elevation effect
+              padding: EdgeInsets.all(8),
+              backgroundColor: Colors.white,
+            ),
             child: const Icon(
               Icons.gps_fixed,
               size: 50,

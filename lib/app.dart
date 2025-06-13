@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/enums/screen_view.dart';
@@ -23,8 +25,9 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   var _activeView = ScreenView.ListView;
-  final MessagesService messagesService = MessagesService();
   late AppState appState;
+  MessagesService messagesService =
+      MessagesService(); // יצירת מופע של MessagesService
 
   @override
   void initState() {
@@ -53,22 +56,14 @@ class _AppState extends State<App> {
     appState.toggleLoading(false);
   }
 
-  Future<void> loadMessages() async {
+  Future<void> updatePackageStatusFromMessages(BuildContext context) async {
     if (appState.isLoading) return;
 
     try {
       appState.updateLoadingType(LoadingType.sendingMessages);
       appState.toggleLoading(true);
 
-      final messagesService = MessagesService();
-      await messagesService.getMessages();
-      var messageBodies = messagesService.messages
-          .map((message) => message.body)
-          .where((body) => body != null)
-          .cast<String>()
-          .toList();
-
-      await sendMessages(messageBodies);
+      await messagesService.sendMessagesData(context, true);
 
       await appState.fetchPackagesFromServer();
       appState.updateLoadingType(LoadingType.none);
@@ -165,7 +160,9 @@ class _AppState extends State<App> {
           ),
           ScreenFooter(
             onAddPackageTap: _openNewPackageModal,
-            onScanSMSTap: loadMessages,
+            onScanSMSTap: () {
+              updatePackageStatusFromMessages(context);
+            },
           ),
           SizedBox(
             height: 20,

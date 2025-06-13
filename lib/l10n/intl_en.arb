@@ -85,6 +85,10 @@
   "status_available_pickup": "Available for Pick-Up",
   "status_delivered": "Delivered",
   "status_exception": "Exception / Delay",
-  "status_unknown": "Unknown Data"
+  "status_unknown": "Unknown Data",
+  "packageIdChanged": "Package ID Changed",
+  "packageIdChangedFrom": "Package ID changed from",
+  "to": "to",
+  "status_ready_to_ship": "Ready for pickup by courier"
 
 }

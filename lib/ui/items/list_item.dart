@@ -40,7 +40,8 @@ class _ListItemState extends State<ListItem> {
           ),
           TextButton(
             onPressed: () {
-              appState.deleteItem(widget.package.packageId);
+              appState.deleteItem(
+                  widget.package.packageId, widget.package.firestoreId);
               Navigator.of(context).pop();
             },
             child: Text(tr.delete),
@@ -58,7 +59,6 @@ class _ListItemState extends State<ListItem> {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     final details = <String, dynamic>{
-      tr.description: pkg.description,
       tr.address: pkg.address,
       tr.pickupPoint: pkg.pickupPointName,
       tr.postOfficeCode: pkg.postOfficeCode,
@@ -96,7 +96,6 @@ class _ListItemState extends State<ListItem> {
     final cardColor =
         actionInfo?.backgroundColor.withAlpha((0.5 * 255).toInt()) ??
             Colors.grey.withAlpha((0.05 * 255).toInt());
-    final statusKey = actionInfo?.status;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
@@ -117,9 +116,6 @@ class _ListItemState extends State<ListItem> {
                     size: 28,
                   ),
                   const SizedBox(width: 10),
-                  if (pkg.arrivalMessage != null &&
-                      pkg.arrivalMessage!.trim().isNotEmpty)
-                    MessageDialogButton(message: pkg.arrivalMessage!),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,9 +139,24 @@ class _ListItemState extends State<ListItem> {
                             ),
                           ),
                         ),
+                        if (pkg.description.isNotEmpty == true)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              pkg.description!,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  if (pkg.arrivalMessage != null &&
+                      pkg.arrivalMessage!.trim().isNotEmpty)
+                    MessageDialogButton(message: pkg.arrivalMessage!),
                   if (pkg.eStatus != "ERROR")
                     IconButton(
                       icon: AnimatedRotation(

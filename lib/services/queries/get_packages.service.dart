@@ -6,11 +6,15 @@ import 'package:http/http.dart' as http;
 
 Future<List<Package>> getPackages() async {
   try {
-    var res = await http.post(Uri.parse('${AppConfig.apiUri}/api/get-packages'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(FirebaseAuth.instance.currentUser?.uid));
+    var res = await http
+        .post(Uri.parse('${AppConfig.apiUri}/api/get-packages'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+            },
+            body: jsonEncode(FirebaseAuth.instance.currentUser?.uid))
+        .timeout(
+          Duration(seconds: 30000),
+        );
 
     if (res.statusCode == 200) {
       final jsonResponse = jsonDecode(res.body);
@@ -19,6 +23,7 @@ Future<List<Package>> getPackages() async {
         return (jsonResponse['data'] as List).map((pckg) {
           return Package(
             packageId: pckg['packageId'],
+            firestoreId: pckg['id'],
             address: pckg['address'],
             description: pckg['description'],
             postOfficeCode: pckg['postOfficeCode'] ?? '',
