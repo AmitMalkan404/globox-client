@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/app_state.dart';
+import 'package:globox/services/internal/messages_service.dart';
 import 'package:globox/services/queries/new_package.service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -20,6 +21,8 @@ class AddNewPackage extends StatefulWidget {
 class _AddNewPackageState extends State<AddNewPackage> {
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
+  MessagesService messagesService =
+      MessagesService(); // יצירת מופע של MessagesService
 
   @override
   void dispose() {

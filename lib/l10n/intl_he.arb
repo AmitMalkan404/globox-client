@@ -85,5 +85,10 @@
   "status_available_pickup": "זמין לאיסוף",
   "status_delivered": "נמסרה",
   "status_exception": "עיכוב / חריגה",
-  "status_unknown": "לא קיים מידע על חבילה"
+  "status_unknown": "לא קיים מידע על חבילה",
+  "packageIdChanged": "מזהה חבילה השתנה",
+  "packageIdChangedFrom": "מזהה החבילה השתנה מ-",
+  "to": "ל-",
+  "status_ready_to_ship": "מוכן לאיסוף על ידי חברת השילוח"
+
 }

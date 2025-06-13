@@ -14,6 +14,11 @@ class ActionCodeInfo {
 }
 
 final Map<String, ActionCodeInfo> actionCodeMap = {
+  "CW_INBOUND": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_warehouse_processing,
+    icon: Icons.inventory,
+    backgroundColor: Colors.purple,
+  ),
   "GWMS_ACCEPT": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_order_received,
     icon: Icons.assignment_turned_in,
@@ -34,6 +39,11 @@ final Map<String, ActionCodeInfo> actionCodeMap = {
     icon: Icons.inventory_2,
     backgroundColor: Colors.purpleAccent,
   ),
+  "CW_COMMON_PROCESSING1": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_warehouse_processing,
+    icon: Icons.warehouse,
+    backgroundColor: Colors.purpleAccent,
+  ),
   "SC_INBOUND_SUCCESS": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_sorting_center,
     icon: Icons.sync_alt,
@@ -42,6 +52,11 @@ final Map<String, ActionCodeInfo> actionCodeMap = {
   "SC_OUTBOUND_SUCCESS": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_sorting_center,
     icon: Icons.sync_alt,
+    backgroundColor: Colors.deepPurpleAccent,
+  ),
+  "PRE_READY_TO_SHIP": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_ready_to_ship,
+    icon: Icons.all_inbox,
     backgroundColor: Colors.deepPurpleAccent,
   ),
   "CC_EX_START": ActionCodeInfo(
@@ -72,6 +87,11 @@ final Map<String, ActionCodeInfo> actionCodeMap = {
   "LH_ARRIVE": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_arrived_destination,
     icon: Icons.flag_circle,
+    backgroundColor: Colors.teal,
+  ),
+  "COMMON_INTRANSIT": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_arrived_destination,
+    icon: Icons.location_city,
     backgroundColor: Colors.teal,
   ),
   "CC_HO_IN_SUCCESS": ActionCodeInfo(
@@ -108,6 +128,11 @@ final Map<String, ActionCodeInfo> actionCodeMap = {
     status: (ctx) => AppLocalizations.of(ctx)!.status_delivery_failed,
     icon: Icons.report_problem,
     backgroundColor: Colors.redAccent,
+  ),
+  "GSTA_INFORM_BUYER": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_available_pickup,
+    icon: Icons.store_mall_directory,
+    backgroundColor: Colors.lightGreen,
   ),
   "GTMS_STA_SIGNED": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_available_pickup,
