@@ -86,9 +86,11 @@
   "status_delivered": "Delivered",
   "status_exception": "Exception / Delay",
   "status_unknown": "Unknown Data",
+  "status_ready_to_ship": "Ready for pickup by courier",
   "packageIdChanged": "Package ID Changed",
   "packageIdChangedFrom": "Package ID changed from",
   "to": "to",
-  "status_ready_to_ship": "Ready for pickup by courier"
-
+  "textCopied": "Text copied!",
+  "failedToSendMessages": "Failed to send messages, Please try again.",
+  "somethingWentWrong": "Something went wrong, please try again."
 }

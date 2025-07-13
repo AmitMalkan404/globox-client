@@ -38,4 +38,48 @@ class Package {
     this.destCountry,
     this.createdAt,
   });
+
+  Map<String, dynamic> toJson() => {
+        'packageId': packageId,
+        'firestoreId': firestoreId,
+        'address': address,
+        'description': description,
+        'postOfficeCode': postOfficeCode,
+        'pickupPointName': pickupPointName,
+        'coordinates': coordinates,
+        'createdAt': createdAt?.toIso8601String(),
+        'arrivalMessage': arrivalMessage,
+        'eStatus': eStatus,
+        'statusDesc': statusDesc,
+        'statusDetailedDesc': statusDetailedDesc,
+        'time': time,
+        'actionCode': actionCode,
+        'contact': contact,
+        'contactDetails': contactDetails,
+        'originCountry': originCountry,
+        'destCountry': destCountry,
+      };
+
+  factory Package.fromJson(Map<String, dynamic> json) => Package(
+        packageId: json['packageId'],
+        firestoreId: json['firestoreId'],
+        address: json['address'],
+        description: json['description'],
+        postOfficeCode: json['postOfficeCode'],
+        pickupPointName: json['pickupPointName'],
+        coordinates: List<double>.from(json['coordinates']),
+        createdAt: json['createdAt'] != null
+            ? DateTime.parse(json['createdAt'])
+            : null,
+        arrivalMessage: json['arrivalMessage'],
+        eStatus: json['eStatus'],
+        statusDesc: json['statusDesc'],
+        statusDetailedDesc: json['statusDetailedDesc'],
+        time: json['time'],
+        actionCode: json['actionCode'],
+        contact: json['contact'],
+        contactDetails: json['contactDetails'],
+        originCountry: json['originCountry'],
+        destCountry: json['destCountry'],
+      );
 }

@@ -86,9 +86,11 @@
   "status_delivered": "נמסרה",
   "status_exception": "עיכוב / חריגה",
   "status_unknown": "לא קיים מידע על חבילה",
+  "status_ready_to_ship": "מוכן לאיסוף על ידי חברת השילוח",
   "packageIdChanged": "מזהה חבילה השתנה",
   "packageIdChangedFrom": "מזהה החבילה השתנה מ-",
   "to": "ל-",
-  "status_ready_to_ship": "מוכן לאיסוף על ידי חברת השילוח"
-
+  "textCopied": "מזהה הועתק!",
+  "failedToSendMessages": "שליחת ההודעות נכשלה, נא לנסות שוב.",
+  "somethingWentWrong": "משהו השתבש, נא לנסות שוב."
 }

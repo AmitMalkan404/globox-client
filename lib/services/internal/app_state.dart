@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/map_utils.dart';
+import 'package:globox/services/internal/package_local_storage.dart';
 import 'package:globox/services/queries/delete_package.dart';
 import 'package:globox/services/queries/get_packages.service.dart';
+import 'package:globox/ui/widgets/dialogs.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class AppState with ChangeNotifier {
   List<Package> mainPackages = [];
@@ -20,9 +24,6 @@ class AppState with ChangeNotifier {
   }
 
   void _initialize() async {
-    // if (mainPackages.isEmpty) {
-    //   await fetchPackagesFromServer();
-    // }
     currentPosition = await getCurrentLocation();
     notifyListeners();
   }
@@ -32,24 +33,41 @@ class AppState with ChangeNotifier {
   Future<void> fetchPackagesFromServer() async {
     try {
       mainPackages = await getPackages(); // קריאה לשרת
+      await PackagesStorage.saveListToLocalStorage(mainPackages);
       notifyListeners(); // עדכון כל המאזינים
     } catch (e) {
       print('Error fetching array: $e');
     }
   }
 
+  Future<void> fetchPackagesFromLocalStorage() async {
+    try {
+      final packagesStorage = PackagesStorage();
+      if (await packagesStorage.isPackagesDataExpired()) {
+        mainPackages = [];
+      } else {
+        mainPackages = await PackagesStorage.getListFromLocalStorage();
+      }
+      notifyListeners(); // עדכון כל המאזינים
+    } catch (e) {
+      print('Error fetching packages from local storage: $e');
+    }
+  }
+
   Future<void> deleteItem(String packageId, String firestoreId) async {
     try {
-      toggleLoading(true);
-      updateLoadingType(LoadingType.deletingPackage);
-
+      startLoading(LoadingType.deletingPackage);
       await deletePackage(packageId, firestoreId); // מחיקה בשרת
       await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
-
-      updateLoadingType(LoadingType.none);
-      toggleLoading(false);
     } catch (e) {
+      showGenericDialog(
+        context: navigatorKey.currentContext!,
+        title: 'Error',
+        message: 'Failed to delete package. Please try again later.',
+      );
       print('Error deleting package: $e');
+    } finally {
+      stopLoading();
     }
   }
 
@@ -83,5 +101,15 @@ class AppState with ChangeNotifier {
     } catch (e) {
       print('Error updating Loading Type: $e');
     }
+  }
+
+  void startLoading(LoadingType type) {
+    updateLoadingType(type);
+    toggleLoading(true);
+  }
+
+  void stopLoading() {
+    updateLoadingType(LoadingType.none);
+    toggleLoading(false);
   }
 }

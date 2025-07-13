@@ -94,21 +94,26 @@ class MapCardItem extends StatelessWidget {
           SizedBox(height: 10),
 
           // Status
-          Row(
-            children: [
-              Icon(Icons.code, color: const Color.fromARGB(255, 22, 111, 212)),
-              SizedBox(width: 10),
-              Text(
-                "${tr.status}:",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(width: 10),
-              Text(
-                actionCodeMap[package.actionCode]!.status(context),
-                style: TextStyle(color: Colors.blue),
-              ),
-            ],
-          ),
+          if (package.actionCode != null &&
+              actionCodeMap[package.actionCode] != null)
+            Row(
+              children: [
+                Icon(
+                  Icons.code,
+                  color: const Color.fromARGB(255, 22, 111, 212),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "${tr.status}:",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 10),
+                Text(
+                  actionCodeMap[package.actionCode]!.status(context),
+                  style: TextStyle(color: Colors.blue),
+                ),
+              ],
+            ),
 
           SizedBox(height: 10),
 

@@ -31,7 +31,6 @@ Future<http.Response?> sendMessages(List<String> messages) async {
     }
   } catch (e) {
     // Error handling
-    print('Error occurred while sending messages: $e');
-    return null; // Or return a custom error object
+    throw Exception('Error occurred while sending messages: $e');
   }
 }

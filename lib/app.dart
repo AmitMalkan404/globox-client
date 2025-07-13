@@ -5,14 +5,17 @@ import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/enums/screen_view.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/messages_service.dart';
+import 'package:globox/services/internal/package_local_storage.dart';
 import 'package:globox/services/queries/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
+import 'package:globox/ui/widgets/dialogs.dart';
 import 'package:globox/ui/widgets/loader.dart';
 import 'package:globox/ui/widgets/new_package.dart';
 import 'package:globox/ui/widgets/screen_footer.dart';
 import 'package:globox/ui/widgets/side_drawer.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -41,10 +44,12 @@ class _AppState extends State<App> {
   }
 
   Future<void> loadPackages() async {
-    appState.updateLoadingType(LoadingType.gettingPackages);
-    appState.toggleLoading(true);
+    appState.startLoading(LoadingType.gettingPackages);
 
-    await appState.fetchPackagesFromServer();
+    await appState.fetchPackagesFromLocalStorage();
+    if (appState.mainPackages.isEmpty) {
+      await appState.fetchPackagesFromServer();
+    }
   }
 
   Future<void> _initializeData() async {
@@ -52,25 +57,29 @@ class _AppState extends State<App> {
 
     // after finished init the data then it can remove loader
 
-    appState.updateLoadingType(LoadingType.none);
-    appState.toggleLoading(false);
+    appState.stopLoading();
   }
 
   Future<void> updatePackageStatusFromMessages(BuildContext context) async {
+    final tr = AppLocalizations.of(context)!;
     if (appState.isLoading) return;
 
     try {
-      appState.updateLoadingType(LoadingType.sendingMessages);
-      appState.toggleLoading(true);
+      appState.startLoading(LoadingType.sendingMessages);
 
       await messagesService.sendMessagesData(context, true);
 
       await appState.fetchPackagesFromServer();
-      appState.updateLoadingType(LoadingType.none);
-      appState.toggleLoading(false);
     } catch (error) {
-      appState.updateLoadingType(LoadingType.none);
-      appState.toggleLoading(false);
+      showGenericDialog(
+        context: context,
+        title: tr.error,
+        message: tr.somethingWentWrong,
+      );
+      print('Error updating package status: $error');
+    } finally {
+      // Ensure that the loading state is reset even if an error occurs
+      appState.stopLoading();
     }
   }
 

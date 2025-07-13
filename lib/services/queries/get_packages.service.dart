@@ -13,7 +13,7 @@ Future<List<Package>> getPackages() async {
             },
             body: jsonEncode(FirebaseAuth.instance.currentUser?.uid))
         .timeout(
-          Duration(seconds: 30000),
+          Duration(seconds: AppConfig.isProduction ? 15 : 600),
         );
 
     if (res.statusCode == 200) {
@@ -52,7 +52,6 @@ Future<List<Package>> getPackages() async {
       throw Exception('Failed to fetch packages: ${res.statusCode}');
     }
   } catch (e) {
-    print('Error fetching packages: $e');
-    return [];
+    throw Exception('Error fetching packages: $e');
   }
 }
