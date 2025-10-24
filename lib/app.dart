@@ -1,12 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/enums/screen_view.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/messages_service.dart';
-import 'package:globox/services/internal/package_local_storage.dart';
-import 'package:globox/services/queries/send_messages.service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
 import 'package:globox/ui/widgets/dialogs.dart';

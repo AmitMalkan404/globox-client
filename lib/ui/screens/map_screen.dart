@@ -149,6 +149,7 @@ class _PackageMapView extends State<PackageMapView> {
         TileLayer(
           urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
           subdomains: ['a', 'b', 'c'],
+          userAgentPackageName: 'com.globox.app',
         ),
         const MapCompass.cupertino(
           hideIfRotatedNorth: true,

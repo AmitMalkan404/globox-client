@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';

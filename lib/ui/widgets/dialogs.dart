@@ -23,13 +23,23 @@ Future<void> showGenericDialog({
       content: Text(message),
       actions: [
         TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor:
+                Theme.of(context).colorScheme.primary.withOpacity(0.65),
+          ),
           onPressed: () {
             if (onOkPressed != null) {
               onOkPressed();
             }
             Navigator.of(context).pop();
           },
-          child: Text(tr.okay),
+          child: Text(
+            tr.okay,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
         if (showCancelButton)
           TextButton(

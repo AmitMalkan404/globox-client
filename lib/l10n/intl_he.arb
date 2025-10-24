@@ -68,7 +68,7 @@
   "invalidInput": "מזהה לא תקין",
   "invalidPackageIDMsg": "נא הכנס מזהה חבילה תקין",
   "duplicatePackageIDMsg": "מזהה החבילה כבר קיים ברשימה",
-  "okay": "בסדר",
+  "okay": "אישור",
   "savePackage": "שמירת חבילה",
   "about": "אודות",
   "logout": "התנתקות",
