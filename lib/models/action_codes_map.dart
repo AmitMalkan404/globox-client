@@ -134,6 +134,11 @@ final Map<String, ActionCodeInfo> actionCodeMap = {
     icon: Icons.store_mall_directory,
     backgroundColor: Colors.lightGreen,
   ),
+  "GTMS_WAIT_SELF_PICK": ActionCodeInfo(
+    status: (ctx) => AppLocalizations.of(ctx)!.status_available_pickup,
+    icon: Icons.store_mall_directory,
+    backgroundColor: Colors.lightGreen,
+  ),
   "GTMS_STA_SIGNED": ActionCodeInfo(
     status: (ctx) => AppLocalizations.of(ctx)!.status_available_pickup,
     icon: Icons.store_mall_directory,

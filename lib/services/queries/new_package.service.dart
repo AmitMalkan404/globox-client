@@ -25,7 +25,7 @@ Future<http.Response> addNewPackage(Package package) async {
           body: jsonEncode(data),
         )
         .timeout(
-          Duration(seconds: 3000),
+          Duration(seconds: AppConfig.isProduction ? 15 : 600),
         );
   } catch (e) {
     throw Exception('Failed to add new package: $e');

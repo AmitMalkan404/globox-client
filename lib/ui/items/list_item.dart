@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/action_codes_map.dart';
 import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/text_utils.dart';
+import 'package:globox/ui/widgets/dialogs.dart';
 import 'package:globox/ui/widgets/message_dialog_button.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -28,27 +30,15 @@ class _ListItemState extends State<ListItem> {
 
   void _showDeleteDialog(BuildContext context, AppState appState) {
     final tr = AppLocalizations.of(context)!;
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(tr.deletePackage),
-        content: Text(tr.deletePackageConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(tr.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              appState.deleteItem(
-                  widget.package.packageId, widget.package.firestoreId);
-              Navigator.of(context).pop();
-            },
-            child: Text(tr.delete),
-          ),
-        ],
-      ),
-    );
+    showGenericDialog(
+        context: context,
+        title: tr.deletePackage,
+        message: tr.deletePackageConfirm,
+        onOkPressed: () => appState.deleteItem(
+              widget.package.packageId,
+              widget.package.firestoreId,
+            ),
+        showCancelButton: true);
   }
 
   @override
@@ -120,11 +110,17 @@ class _ListItemState extends State<ListItem> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          pkg.packageId,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        GestureDetector(
+                          onLongPress: () {
+                            Clipboard.setData(
+                                ClipboardData(text: pkg.packageId));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(tr.textCopied)),
+                            );
+                          },
+                          child: Text(
+                            pkg.packageId,
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ),
                         Padding(
