@@ -92,5 +92,7 @@
   "to": "to",
   "textCopied": "Text copied!",
   "failedToSendMessages": "Failed to send messages, Please try again.",
-  "somethingWentWrong": "Something went wrong, please try again."
+  "somethingWentWrong": "Something went wrong, please try again.",
+  "noPackagesYet": "No packages yet",
+  "yourListOfPackagesWillAppearHereOnceYouAddOne":"Your list of packages will appear here once you add one"
 }

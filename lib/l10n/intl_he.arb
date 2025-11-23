@@ -92,5 +92,7 @@
   "to": "ל-",
   "textCopied": "מזהה הועתק!",
   "failedToSendMessages": "שליחת ההודעות נכשלה, נא לנסות שוב.",
-  "somethingWentWrong": "משהו השתבש, נא לנסות שוב."
+  "somethingWentWrong": "משהו השתבש, נא לנסות שוב.",
+  "noPackagesYet": "אין חבילות עדיין",
+  "yourListOfPackagesWillAppearHereOnceYouAddOne": "כאן תופיע רשימת החבילות שלך ברגע שתוסיף אחת"
 }
