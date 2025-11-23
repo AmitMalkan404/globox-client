@@ -104,6 +104,8 @@ class _AddNewPackageState extends State<AddNewPackage> {
           ),
           const SizedBox(height: 16),
           TextField(
+            maxLines: 4,
+            maxLength: 250,
             controller: _descriptionController,
             decoration: InputDecoration(
               labelText: tr.description,
