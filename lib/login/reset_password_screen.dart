@@ -20,7 +20,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final tr = AppLocalizations.of(context)!;
-    Future<void> _submit() async {
+    Future<void> submit() async {
       if (!_formKey.currentState!.validate()) return;
 
       setState(() {
@@ -73,7 +73,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: _isLoading ? null : _submit,
+                onPressed: _isLoading ? null : submit,
                 child: _isLoading
                     ? const SizedBox(
                         height: 20,

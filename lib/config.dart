@@ -1,7 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConfig {
-  static bool _isProduction = true; // Set to true for production
+  static final bool _isProduction = true; // Set to true for production
 
   static bool get isProduction => _isProduction;
 

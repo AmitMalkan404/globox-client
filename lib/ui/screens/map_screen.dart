@@ -140,9 +140,7 @@ class _PackageMapView extends State<PackageMapView> {
           // Fill your stream when your position changes
           final zoom = position.zoom;
           _mapCenter = position.center;
-          if (zoom != null) {
-            _currentZoom = zoom;
-          }
+          _currentZoom = zoom;
         },
       ),
       children: [

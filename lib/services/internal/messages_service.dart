@@ -41,8 +41,8 @@ class MessagesService {
       BuildContext context, bool shouldRetrive) async {
     final tr = AppLocalizations.of(context)!;
     try {
-      if (this.messages.isEmpty || shouldRetrive) {
-        await this.getMessages();
+      if (messages.isEmpty || shouldRetrive) {
+        await getMessages();
       }
       var messageBodies = _messages
           .map((message) => message.body)
@@ -65,7 +65,7 @@ class MessagesService {
           );
         }
       }
-    } catch (e, stack) {
+    } catch (e) {
       print('Error sending messages: $e');
       // Optionally show an error dialog to the user
       showGenericDialog(

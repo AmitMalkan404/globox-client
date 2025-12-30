@@ -201,8 +201,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       floatingActionButton: !_changesEnabled
           ? FloatingActionButton(
               onPressed: _enableChanges,
-              child: const Icon(Icons.edit),
               tooltip: tr.edit,
+              child: const Icon(Icons.edit),
             )
           : null,
     );

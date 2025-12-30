@@ -24,7 +24,7 @@ Future<http.Response?> sendMessages(List<String> messages) async {
 
     // Checking if the call was successful
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response; // החזרה אם הקריאה הצליחה
+      return response; // if the call was successful
     } else {
       throw Exception(
           'Failed to send messages. Status code: ${response.statusCode}, Body: ${response.body}');

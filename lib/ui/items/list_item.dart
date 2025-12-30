@@ -139,7 +139,7 @@ class _ListItemState extends State<ListItem> {
                           Padding(
                             padding: const EdgeInsets.only(top: 4.0),
                             child: Text(
-                              pkg.description!,
+                              pkg.description,
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.white,
