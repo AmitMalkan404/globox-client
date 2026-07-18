@@ -3,9 +3,8 @@ import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/services/internal/map_utils.dart';
 import 'package:globox/services/internal/package_local_storage.dart';
-import 'package:globox/services/queries/delete_package.dart';
 import 'package:globox/services/queries/get_packages.service.dart';
-import 'package:globox/ui/widgets/dialogs.dart';
+
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,6 +25,7 @@ class AppState with ChangeNotifier {
     currentPosition = await getCurrentLocation();
     notifyListeners();
   }
+
 
   Locale get locale => _locale;
 
@@ -53,22 +53,22 @@ class AppState with ChangeNotifier {
     }
   }
 
-  Future<void> deleteItem(String packageId, String firestoreId) async {
-    try {
-      startLoading(LoadingType.deletingPackage);
-      await deletePackage(packageId, firestoreId); // מחיקה בשרת
-      await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
-    } catch (e) {
-      showGenericDialog(
-        context: navigatorKey.currentContext!,
-        title: 'Error',
-        message: 'Failed to delete package. Please try again later.',
-      );
-      print('Error deleting package: $e');
-    } finally {
-      stopLoading();
-    }
-  }
+  // Future<void> deleteItem(String packageId, String firestoreId) async {
+  //   try {
+  //     startLoading(LoadingType.deletingPackage);
+  //     await deletePackage(packageId, firestoreId); // מחיקה בשרת
+  //     await fetchPackagesFromServer(); // עדכון המערך לאחר המחיקה
+  //   } catch (e) {
+  //     showGenericDialog(
+  //       context: navigatorKey.currentContext!,
+  //       title: 'Error',
+  //       message: 'Failed to delete package. Please try again later.',
+  //     );
+  //     print('Error deleting package: $e');
+  //   } finally {
+  //     stopLoading();
+  //   }
+  // }
 
   Future<void> loadLocale() async {
     final prefs = await SharedPreferences.getInstance();

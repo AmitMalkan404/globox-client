@@ -1,29 +1,30 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'; // 1. הוספנו את Riverpod
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/classes/package.dart';
-import 'package:globox/services/internal/app_state.dart';
+// import 'package:globox/services/internal/app_state.dart'; // מחקנו את זה
+import 'package:globox/providers/loading_provider.dart'; // נתיב משוער - שים את הנכון
+import 'package:globox/providers/packages_provider.dart'; // נתיב משוער - איפה שה-PackagesNotifier נמצא
 import 'package:globox/services/internal/messages_service.dart';
 import 'package:globox/services/queries/new_package.service.dart';
 import 'package:globox/ui/widgets/dialogs.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class AddNewPackage extends StatefulWidget {
-  const AddNewPackage({
-    super.key,
-  });
+// 2. שינינו מ-StatefulWidget ל-ConsumerStatefulWidget
+class AddNewPackage extends ConsumerStatefulWidget {
+  const AddNewPackage({super.key});
 
   @override
-  State<AddNewPackage> createState() => _AddNewPackageState();
+  ConsumerState<AddNewPackage> createState() => _AddNewPackageState();
 }
 
-class _AddNewPackageState extends State<AddNewPackage> {
+// 3. שינינו ל-ConsumerState
+class _AddNewPackageState extends ConsumerState<AddNewPackage> {
   final _packageIdController = TextEditingController();
   final _descriptionController = TextEditingController();
-  MessagesService messagesService =
-      MessagesService(); // יצירת מופע של MessagesService
+  MessagesService messagesService = MessagesService();
 
   @override
   void dispose() {
@@ -34,7 +35,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
+    // מחקנו את ה-Provider.of<AppState>
     final tr = AppLocalizations.of(context)!;
 
     Future<void> submitPackageData() async {
@@ -42,9 +43,13 @@ class _AddNewPackageState extends State<AddNewPackage> {
         final enteredPackageId = _packageIdController.text.trim();
         final enteredDescription = _descriptionController.text.trim();
         String? errorMsg;
+
+        // 4. שולפים את הרשימה מ-Riverpod כדי לבדוק כפילויות
+        final currentPackages = ref.read(packagesProvider).valueOrNull ?? [];
+
         if (enteredPackageId.isEmpty) {
           errorMsg = tr.invalidPackageIDMsg;
-        } else if (appState.mainPackages
+        } else if (currentPackages
             .any((pkg) => pkg.packageId == enteredPackageId)) {
           errorMsg = tr.duplicatePackageIDMsg;
         }
@@ -57,13 +62,12 @@ class _AddNewPackageState extends State<AddNewPackage> {
 
         Navigator.pop(context); // closing the modal bottom sheet
 
-        // adding a small delay to allow the modal to close before showing the loader
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
 
-        // setting the loader to be on adding package loading view
-        appState.startLoading(LoadingType.addingPackage);
+        // 5. מפעילים את טעינת המסך דרך ה-LoadingProvider
+        ref.read(globalLoadingProvider.notifier).state =
+            LoadingType.addingPackage;
 
-        // קריאה לפונקציה המועברת דרך onAddPackage
         await addNewPackage(
           Package(
             packageId: enteredPackageId,
@@ -76,8 +80,8 @@ class _AddNewPackageState extends State<AddNewPackage> {
           ),
         );
 
-        // setting the loader to be off as it finished adding the package
-        await appState.fetchPackagesFromServer();
+        // 6. קוראים לפונקציית הריענון שבנינו ב-PackagesNotifier
+        await ref.read(packagesProvider.notifier).refresh();
       } catch (e) {
         showGenericDialog(
           context: context,
@@ -85,8 +89,8 @@ class _AddNewPackageState extends State<AddNewPackage> {
           message: tr.somethingWentWrong,
         );
       } finally {
-        // Ensure that the loading state is reset even if an error occurs
-        appState.stopLoading();
+        // 7. מכבים את הטעינה בסוף דרך ה-LoadingProvider
+        ref.read(globalLoadingProvider.notifier).state = LoadingType.none;
       }
     }
 
@@ -109,7 +113,7 @@ class _AddNewPackageState extends State<AddNewPackage> {
             controller: _descriptionController,
             decoration: InputDecoration(
               labelText: tr.description,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 16),

@@ -3,23 +3,24 @@ import 'package:flutter/services.dart';
 import 'package:globox/models/classes/package.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/action_codes_map.dart';
-import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/text_utils.dart';
 import 'package:globox/ui/widgets/dialogs.dart';
 import 'package:globox/ui/widgets/message_dialog_button.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:globox/providers/packages_provider.dart';
+import 'package:globox/providers/loading_provider.dart';
 
-class ListItem extends StatefulWidget {
+class ListItem extends ConsumerStatefulWidget {
   final Package package;
 
   const ListItem({super.key, required this.package});
 
   @override
-  State<ListItem> createState() => _ListItemState();
+  ConsumerState<ListItem> createState() => _ListItemState();
 }
 
-class _ListItemState extends State<ListItem> {
+class _ListItemState extends ConsumerState<ListItem> {
   bool _expanded = false;
 
   void _toggleExpanded() {
@@ -28,13 +29,13 @@ class _ListItemState extends State<ListItem> {
     });
   }
 
-  void _showDeleteDialog(BuildContext context, AppState appState) {
+  void _showDeleteDialog(BuildContext context) {
     final tr = AppLocalizations.of(context)!;
     showGenericDialog(
         context: context,
         title: tr.deletePackage,
         message: tr.deletePackageConfirm,
-        onOkPressed: () => appState.deleteItem(
+        onOkPressed: () => ref.read(packagesProvider.notifier).deleteItem(
               widget.package.packageId,
               widget.package.firestoreId,
             ),
@@ -43,7 +44,7 @@ class _ListItemState extends State<ListItem> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
+    final loadingType = ref.watch(globalLoadingProvider);
     final tr = AppLocalizations.of(context)!;
     final pkg = widget.package;
     final textStyle = Theme.of(context).textTheme.bodyMedium;
@@ -54,7 +55,7 @@ class _ListItemState extends State<ListItem> {
       tr.postOfficeCode: pkg.postOfficeCode,
       tr.status: pkg.statusDesc,
       tr.details: pkg.statusDetailedDesc,
-      tr.lastUpdate: formatDateTime(pkg.time!),
+      tr.lastUpdate: formatDateTime(pkg.time),
       tr.origin: pkg.originCountry,
       tr.destination: pkg.destCountry,
       tr.contactDetails: pkg.contactDetails,
@@ -166,8 +167,8 @@ class _ListItemState extends State<ListItem> {
                   IconButton(
                     icon: const Icon(Icons.delete, color: Color(0xFF00B8D9)),
                     onPressed: () {
-                      if (appState.loadingType != LoadingType.deletingPackage) {
-                        _showDeleteDialog(context, appState);
+                      if (loadingType != LoadingType.deletingPackage) {
+                        _showDeleteDialog(context);
                       }
                     },
                   ),
