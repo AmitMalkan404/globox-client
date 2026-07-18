@@ -17,6 +17,7 @@ class Package {
   final String? contactDetails;
   final String? originCountry;
   final String? destCountry;
+  final DateTime? lastSMSSync; // שדה חדש למעקב אחרי עדכוני SMS
 
   Package({
     required this.packageId,
@@ -37,6 +38,7 @@ class Package {
     this.originCountry,
     this.destCountry,
     this.createdAt,
+    this.lastSMSSync,
   });
 
   Map<String, dynamic> toJson() => {
@@ -58,28 +60,58 @@ class Package {
         'contactDetails': contactDetails,
         'originCountry': originCountry,
         'destCountry': destCountry,
+        'lastSMSSync': lastSMSSync?.toIso8601String(),
       };
 
   factory Package.fromJson(Map<String, dynamic> json) => Package(
-        packageId: json['packageId'],
-        firestoreId: json['firestoreId'],
-        address: json['address'],
-        description: json['description'],
-        postOfficeCode: json['postOfficeCode'],
-        pickupPointName: json['pickupPointName'],
-        coordinates: List<double>.from(json['coordinates']),
+        packageId: json['packageId'] ?? '',
+        // מהשרת זה מגיע כ-'id', מקומית כ-'firestoreId'
+        firestoreId: json['id'] ?? json['firestoreId'] ?? '',
+        address: json['address'] ?? '',
+        description: json['description'] ?? '',
+        postOfficeCode: json['postOfficeCode'] ?? '',
+        pickupPointName: json['pickupPointName'] ?? '',
+        coordinates: _parseCoordinates(json['coordinates']),
         createdAt: json['createdAt'] != null
-            ? DateTime.parse(json['createdAt'])
+            ? DateTime.tryParse(json['createdAt'])
             : null,
-        arrivalMessage: json['arrivalMessage'],
+        // מהשרת זה מגיע כ-'arrivalMsg', מקומית כ-'arrivalMessage'
+        arrivalMessage: json['arrivalMsg'] ?? json['arrivalMessage'] ?? '',
         eStatus: json['eStatus'],
         statusDesc: json['statusDesc'],
         statusDetailedDesc: json['statusDetailedDesc'],
-        time: json['time'],
+        time: _parseTime(json['time']),
         actionCode: json['actionCode'],
         contact: json['contact'],
         contactDetails: json['contactDetails'],
         originCountry: json['originCountry'],
         destCountry: json['destCountry'],
+        lastSMSSync: json['lastSMSSync'] != null
+            ? DateTime.tryParse(json['lastSMSSync'])
+            : null,
       );
+
+  // --- פונקציות עזר פרטיות לטיפול במידע קשוח ---
+
+  static List<double> _parseCoordinates(dynamic coords) {
+    if (coords == null) return [];
+    if (coords is List) {
+      return coords.map((c) => (c as num).toDouble()).toList();
+    }
+    if (coords is Map) {
+      return [
+        (coords['lat'] ?? 0 as num).toDouble(),
+        (coords['lng'] ?? 0 as num).toDouble()
+      ];
+    }
+    return [];
+  }
+
+  static String? _parseTime(dynamic timeVal) {
+    if (timeVal == null || timeVal == 0) return null;
+    if (timeVal is int) {
+      return DateTime.fromMillisecondsSinceEpoch(timeVal).toIso8601String();
+    }
+    return timeVal.toString();
+  }
 }
