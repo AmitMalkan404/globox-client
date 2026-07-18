@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'providers/locale_provider.dart';
 
 import 'firebase_options.dart';
 import 'services/internal/app_state.dart';
@@ -19,27 +21,28 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  final appState = AppState();
-  await appState.loadLocale();
+  // יצירת קונטיינר כדי לאתחל את השפה לפני ה-runApp
+  final container = ProviderContainer();
+  await container.read(localeProvider.notifier).loadLocale();
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => appState,
-      child: const GloboxAppWithLocaleListener(),
+    UncontrolledProviderScope(
+      container: container,
+      child: provider.ChangeNotifierProvider(
+        create: (_) => AppState(), // נשאר זמנית בשביל שאר המשתנים
+        child: const GloboxAppWithLocaleListener(),
+      ),
     ),
   );
 }
 
-class GloboxAppWithLocaleListener extends StatelessWidget {
+class GloboxAppWithLocaleListener extends ConsumerWidget {
   const GloboxAppWithLocaleListener({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        return GloboxApp(locale: appState.locale);
-      },
-    );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    return GloboxApp(locale: locale);
   }
 }
 

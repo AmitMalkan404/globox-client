@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:globox/services/internal/app_state.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:globox/providers/locale_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _changesEnabled = false;
 
   // temp settings before applying
@@ -24,8 +24,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    final appState = Provider.of<AppState>(context, listen: false);
-    _selectedLanguageCode = appState.locale.languageCode; // ✅ נטען בהתחלה
+    _selectedLanguageCode =
+        ref.read(localeProvider).languageCode; // ✅ נטען בהתחלה מ-Riverpod
   }
 
   void _enableChanges() {
@@ -37,10 +37,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _applyChanges(BuildContext context, {bool shouldPop = false}) {
-    final appState = context.read<AppState>();
-
     // ⬇️ עדכון השפה בפועל רק כאן!
-    appState.setLocale(_selectedLanguageCode);
+    ref
+        .read(localeProvider.notifier)
+        .setLocale(_selectedLanguageCode); // ✅ עדכון ב-Riverpod
 
     // TODO: עדכון שאר השדות כאן אם אתה שומר אותם
 
@@ -55,7 +55,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<AppState>();
     final tr = AppLocalizations.of(context)!;
 
     return Scaffold(
