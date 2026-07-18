@@ -18,7 +18,7 @@ Future<http.Response> addNewPackage(Package package) async {
   try {
     return await http
         .post(
-          Uri.parse('${AppConfig.apiUri}/api/new-package'),
+          Uri.parse('${AppConfig.apiUri}/packages'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },

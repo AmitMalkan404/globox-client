@@ -6,47 +6,28 @@ import 'package:http/http.dart' as http;
 
 Future<List<Package>> getPackages() async {
   try {
-    var res = await http
-        .post(Uri.parse('${AppConfig.apiUri}/api/get-packages'),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(FirebaseAuth.instance.currentUser?.uid))
-        .timeout(
-          Duration(seconds: AppConfig.isProduction ? 15 : 600),
-        );
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) throw Exception('User is not logged in');
+
+    final url = Uri.parse('${AppConfig.apiUri}/packages?uid=$uid');
+    var res = await http.get(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    ).timeout(
+      Duration(seconds: AppConfig.isProduction ? 15 : 60),
+    );
 
     if (res.statusCode == 200) {
       final jsonResponse = jsonDecode(res.body);
+      final data = jsonResponse['data'];
 
-      if (jsonResponse['data'] != null) {
-        return (jsonResponse['data'] as List).map((pckg) {
-          return Package(
-            packageId: pckg['packageId'],
-            firestoreId: pckg['id'],
-            address: pckg['address'],
-            description: pckg['description'],
-            postOfficeCode: pckg['postOfficeCode'] ?? '',
-            pickupPointName: pckg['pickupPointName'] ?? '',
-            coordinates: (pckg['coordinates'] as List)
-                .map((coord) => coord as double)
-                .toList(),
-            createdAt: DateTime.parse(pckg['createdAt']),
-            eStatus: pckg['eStatus'],
-            statusDesc: pckg['statusDesc'],
-            statusDetailedDesc: pckg['statusDetailedDesc'],
-            time: DateTime.fromMillisecondsSinceEpoch(pckg['time'])
-                .toIso8601String(),
-            actionCode: pckg['actionCode'] ?? '',
-            contact: pckg['contact'] ?? '',
-            contactDetails: pckg['contactDetails'] ?? '',
-            originCountry: pckg['originCountry'] ?? '',
-            destCountry: pckg['destCountry'] ?? '',
-            arrivalMessage: pckg['arrivalMsg'] ?? '',
-          );
-        }).toList();
+      // התיקון ל-Iterable: אנחנו משתמשים ב-fromJson וחותמים ב-toList()
+      if (data != null && data is List) {
+        return data.map((item) => Package.fromJson(item)).toList();
       } else {
-        throw Exception('No data found');
+        return []; // מחזירים רשימה ריקה אם אין מידע במקום לזרוק שגיאה
       }
     } else {
       throw Exception('Failed to fetch packages: ${res.statusCode}');

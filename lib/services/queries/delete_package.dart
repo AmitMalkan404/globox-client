@@ -12,7 +12,7 @@ Future<http.Response> deletePackage(
 
     return await http
         .post(
-          Uri.parse('${AppConfig.apiUri}/api/archive-package'),
+          Uri.parse('${AppConfig.apiUri}/packages/archive'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },
