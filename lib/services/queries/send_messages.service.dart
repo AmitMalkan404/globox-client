@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:globox/config.dart';
 import 'package:http/http.dart' as http;
 
-Future<http.Response?> sendMessages(List<String> messages) async {
+Future<http.Response?> sendMessages(List<Map<String, String>> messages) async {
   final user = FirebaseAuth.instance.currentUser;
 
   try {
@@ -12,7 +12,7 @@ Future<http.Response?> sendMessages(List<String> messages) async {
     }
     final response = await http
         .post(
-          Uri.parse('${AppConfig.apiUri}/api/send-messages'),
+          Uri.parse('${AppConfig.apiUri}/packages/sync-messages'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           },

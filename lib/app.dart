@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:globox/models/classes/package.dart';
 import 'package:globox/models/enums/loading_type.dart';
 import 'package:globox/models/enums/screen_view.dart';
-import 'package:globox/services/internal/app_state.dart';
 import 'package:globox/services/internal/messages_service.dart';
 import 'package:globox/ui/screens/list_screen.dart';
 import 'package:globox/ui/screens/map_screen.dart';
@@ -10,21 +10,22 @@ import 'package:globox/ui/widgets/loader.dart';
 import 'package:globox/ui/widgets/new_package.dart';
 import 'package:globox/ui/widgets/screen_footer.dart';
 import 'package:globox/ui/widgets/side_drawer.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:globox/providers/packages_provider.dart';
+import 'package:globox/providers/loading_provider.dart';
 
-class App extends StatefulWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  State<App> createState() {
-    return _AppState();
+  ConsumerState<App> createState() {
+    return _AppScreenState();
   }
 }
 
-class _AppState extends State<App> {
+class _AppScreenState extends ConsumerState<App> {
   var _activeView = ScreenView.ListView;
-  late AppState appState;
   MessagesService messagesService =
       MessagesService(); // יצירת מופע של MessagesService
 
@@ -33,39 +34,59 @@ class _AppState extends State<App> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      appState =
-          Provider.of<AppState>(context, listen: false); // שמירה על האובייקט
       _initializeData();
     });
   }
 
   Future<void> loadPackages() async {
-    appState.startLoading(LoadingType.gettingPackages);
+    ref.read(globalLoadingProvider.notifier).state =
+        LoadingType.gettingPackages;
 
-    await appState.fetchPackagesFromLocalStorage();
-    if (appState.mainPackages.isEmpty) {
-      await appState.fetchPackagesFromServer();
+    try {
+      await ref.read(packagesProvider.future);
+    } catch (e) {
+      print('Error loading packages: $e');
     }
   }
 
   Future<void> _initializeData() async {
+    await updatePackageStatusFromMessages(context);
     await loadPackages();
 
     // after finished init the data then it can remove loader
 
-    appState.stopLoading();
+    ref.read(globalLoadingProvider.notifier).state = LoadingType.none;
   }
 
   Future<void> updatePackageStatusFromMessages(BuildContext context) async {
     final tr = AppLocalizations.of(context)!;
-    if (appState.isLoading) return;
+
+    if (ref.read(globalLoadingProvider) != LoadingType.none) return;
 
     try {
-      appState.startLoading(LoadingType.sendingMessages);
+      ref.read(globalLoadingProvider.notifier).state =
+          LoadingType.sendingMessages;
 
-      await messagesService.sendMessagesData(context, true);
+      final activePackages = ref.read(packagesProvider).valueOrNull ?? [];
 
-      await appState.fetchPackagesFromServer();
+      // sendMessagesData is now Riverpod-free; it returns an SmsResult?
+      // We apply the patch here in the caller, keeping the service clean.
+      final result = await messagesService.sendMessagesData(
+        context,
+        activePackages,
+      );
+
+      if (result != null && result.syncedPackageIds.isNotEmpty) {
+        await ref.read(packagesProvider.notifier).patchPackages(
+          result.syncedPackageIds,
+          (pkg) => Package.fromJson({
+            ...pkg.toJson(),
+            'lastSMSSync': result.syncedAt.toIso8601String(),
+          }),
+        );
+      }
+
+      await ref.read(packagesProvider.notifier).refresh();
     } catch (error) {
       showGenericDialog(
         context: context,
@@ -74,8 +95,7 @@ class _AppState extends State<App> {
       );
       print('Error updating package status: $error');
     } finally {
-      // Ensure that the loading state is reset even if an error occurs
-      appState.stopLoading();
+      ref.read(globalLoadingProvider.notifier).state = LoadingType.none;
     }
   }
 
@@ -85,8 +105,8 @@ class _AppState extends State<App> {
     });
   }
 
-  void _openNewPackageModal(BuildContext context) {
-    if (appState.isLoading) return;
+  void _openNewPackageModal() {
+    if (ref.read(globalLoadingProvider) != LoadingType.none) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -105,19 +125,20 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
+    final packages = ref.watch(packagesProvider).valueOrNull ?? [];
+    final loadingType = ref.watch(globalLoadingProvider);
+    final isLoading = loadingType != LoadingType.none;
 
     double screenWidth = MediaQuery.of(context).size.width;
     Widget screenWidget = PackagesListView(
-      packages: appState.mainPackages,
+      packages: packages,
     );
 
     if (_activeView == ScreenView.MapView) {
       screenWidget = PackageMapView(
         // passing the packages with coordinates exclusively
-        packages: appState.mainPackages
-            .where((pckg) => pckg.coordinates.isNotEmpty)
-            .toList(),
+        packages:
+            packages.where((pckg) => pckg.coordinates.isNotEmpty).toList(),
       );
     }
 
@@ -153,9 +174,9 @@ class _AppState extends State<App> {
           Expanded(
             flex: 1,
             child: Center(
-              child: appState.isLoading
+              child: isLoading
                   ? Loader(
-                      loadingType: appState.loadingType,
+                      loadingType: loadingType,
                     )
                   : SizedBox(
                       width: screenWidth * 0.95,
@@ -164,7 +185,7 @@ class _AppState extends State<App> {
             ),
           ),
           ScreenFooter(
-            onAddPackageTap: _openNewPackageModal,
+            onAddPackageTap: (ctx) => _openNewPackageModal(),
             onScanSMSTap: () {
               updatePackageStatusFromMessages(context);
             },
